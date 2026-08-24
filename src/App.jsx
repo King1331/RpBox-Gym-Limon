@@ -8,12 +8,12 @@ import ProgressScreen from './screens/ProgressScreen';
 import StaffScreen from './screens/StaffScreen';
 import { ReloadPrompt } from './components/ReloadPrompt';
 
-// ⚡ Físicas ultra-rápidas: Respuesta inmediata al tacto
+// ⚡ Físicas un 20% más rápidas: Máxima velocidad y ligereza
 const springTransition = {
   type: 'spring',
-  stiffness: 900, // Extremadamente rígido para que vuele
-  damping: 40,    // Frena al instante sin rebotes molestos
-  mass: 0.3,      // Súper ligero
+  stiffness: 1200, // Más rígido para una respuesta instantánea
+  damping: 42,     // Freno en seco milimétrico
+  mass: 0.2,       // Ultraligero
 };
 
 export default function App() {
@@ -25,9 +25,9 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location}
-            initial={{ opacity: 0, x: 8 }} // Distancia mínima para un cambio sutil y veloz
+            initial={{ opacity: 0, x: 6 }} // Distancia aún más corta para ganar velocidad pura
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -8 }}
+            exit={{ opacity: 0, x: -6 }}
             transition={springTransition}
             className="flex flex-col flex-1 min-h-full w-full"
           >
