@@ -77,15 +77,25 @@
   --ring: oklch(0.556 0 0);
   --radius: 0.625rem;
 
-  /* Agrega esto justo abajo para forzar el fondo en todo el canvas de Android */
-html, body {
-  background-color: var(--background);
-  color-scheme: dark;
-  overscroll-behavior-y: none;
-}
+  html, body {
+    background-color: var(--background);
+    color-scheme: dark;
+    overscroll-behavior-y: none;
+  }
 }
 
 @layer base {
+  /* --- AJUSTE GLOBAL DE REM PARA BOTONES E ICONOS --- */
+  html {
+    font-size: 18px; /* Incrementa proporcionalmente botones, navbars e iconos en celulares */
+  }
+
+  @media (min-width: 768px) {
+    html {
+      font-size: 16px; /* Mantiene la escala estándar en tablets y laptops */
+    }
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
@@ -217,7 +227,7 @@ html, body {
   }
 
   .bottom-nav {
-  position: fixed;
+    position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -229,7 +239,6 @@ html, body {
     justify-content: space-between;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     background-color: rgba(20, 20, 20, 0.9);
-    /* Combinamos el padding original lateral/superior con el safe area inferior dinámico */
     padding: 0.75rem 1.5rem calc(0.75rem + env(safe-area-inset-bottom)) 1.5rem;
     backdrop-filter: blur(16px);
   }
