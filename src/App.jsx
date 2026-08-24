@@ -8,12 +8,11 @@ import ProgressScreen from './screens/ProgressScreen';
 import StaffScreen from './screens/StaffScreen';
 import { ReloadPrompt } from './components/ReloadPrompt';
 
-// ⚡ Físicas un 20% más rápidas: Máxima velocidad y ligereza
-const springTransition = {
-  type: 'spring',
-  stiffness: 1200, // Más rígido para una respuesta instantánea
-  damping: 42,     // Freno en seco milimétrico
-  mass: 0.2,       // Ultraligero
+// Transición tween ligera para máximo rendimiento en tablets de bajos recursos
+const lightTransition = {
+  type: 'tween',
+  duration: 0.12,
+  ease: 'easeOut',
 };
 
 export default function App() {
@@ -25,11 +24,12 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location}
-            initial={{ opacity: 0, x: 6 }} // Distancia aún más corta para ganar velocidad pura
+            initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -6 }}
-            transition={springTransition}
-            className="flex flex-col flex-1 min-h-full w-full"
+            exit={{ opacity: 0, x: -10 }}
+            transition={lightTransition}
+            // Coincide exactamente con el bg-ink de tus pantallas (HomeScreen, etc.)
+            className="flex flex-col flex-1 min-h-full w-full bg-ink"
           >
             <Switch location={location}>
               <Route path="/" component={HomeScreen} />
