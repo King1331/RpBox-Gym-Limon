@@ -15,7 +15,7 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] border-t border-white/5 bg-ink/90 px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl"
+      className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] border-t border-white/5 bg-ink/90 px-6 pt-3 pb-3 mb-[env(safe-area-inset-bottom)] backdrop-blur-xl rounded-t-2xl shadow-lg"
     >
       <ul className="flex items-center justify-between">
         {navItems.map(({ icon: Icon, label, path }) => {
