@@ -1,15 +1,8 @@
 import React from 'react';
-import {
-  Bell,
-  Dumbbell,
-  Home,
-  BarChart3,
-  User,
-} from 'lucide-react';
+import { Bell, Dumbbell, Home, BarChart3, User } from 'lucide-react';
 import { Link, useLocation } from 'wouter';
 import { cn } from '@/lib/utils';
 
-// Definimos nuestras rutas principales
 const navItems = [
   { href: '/', label: 'Inicio', icon: Home },
   { href: '/rutina', label: 'Rutina', icon: Dumbbell },
@@ -24,8 +17,12 @@ export default function AppShell({ children }) {
     <div className="app-frame">
       <div className="hero-backdrop" />
 
-      {/* Renderizado nativo directo, sin animaciones de JS pesadas */}
-      <main className="shell-content relative overflow-y-auto flex-1">
+      {/* 
+        Añadimos las clases para ocultar la barra de scroll en todos los navegadores móviles/desktop:
+        - [&::-webkit-scrollbar]:hidden -> Oculta en Chrome, Safari y Edge
+        - [scrollbar-width:none] -> Oculta en Firefox
+      */}
+      <main className="shell-content relative overflow-y-auto overflow-x-hidden flex-1 [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
         {children}
       </main>
 
@@ -38,7 +35,12 @@ export default function AppShell({ children }) {
           return (
             <Link
               href={href}
-              className={cn('nav-item', isItemActive && 'active')}
+              className={cn(
+                'nav-item', 
+                isItemActive && 'active',
+                // Regla 3: Micro-interacción de resorte al tocar usando Tailwind puramente
+                'active:scale-95 transition-transform duration-100'
+              )}
               data-testid={`link-nav-${label.toLowerCase()}`}
               key={href}
             >
