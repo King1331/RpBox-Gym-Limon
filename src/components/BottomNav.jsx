@@ -15,11 +15,11 @@ export default function BottomNav() {
   return (
     <nav
       aria-label="Navegación principal"
-      className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] border-t border-white/5 bg-ink/90 px-6 py-3 backdrop-blur-xl"
+      // Cambié `py-3` por `pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]`
+      className="fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-[440px] border-t border-white/5 bg-ink/90 px-6 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl"
     >
       <ul className="flex items-center justify-between">
         {navItems.map(({ icon: Icon, label, path }) => {
-          // Compara si la ruta actual coincide con el botón
           const active = location === path;
 
           return (
