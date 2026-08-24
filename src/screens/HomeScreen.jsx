@@ -25,7 +25,7 @@ export default function HomeScreen() {
         <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
           Hola,
           <br />
-          King.
+          Alumno.
         </h1>
         <p className="mt-3 text-base font-medium text-white/70">
           Hoy no se negocia. Hoy se entrena.
