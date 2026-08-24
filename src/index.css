@@ -76,6 +76,13 @@
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
   --radius: 0.625rem;
+
+  /* Agrega esto justo abajo para forzar el fondo en todo el canvas de Android */
+html, body {
+  background-color: var(--background);
+  color-scheme: dark;
+  overscroll-behavior-y: none;
+}
 }
 
 @layer base {
