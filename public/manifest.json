@@ -2,12 +2,12 @@
   "name": "RP Box",
   "short_name": "RP Box",
   "description": "Aplicación de Gym - Gestiona tus entrenamientos",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait-primary",
   "start_url": "/?fullscreen=true",
   "scope": "/",
-  "theme_color": "#141414",
-  "background_color": "#141414",
+  "theme_color": "#000000",
+  "background_color": "#000000",
   "icons": [
     {
       "src": "/images/mobile-icons/android-icon-36x36.png",
