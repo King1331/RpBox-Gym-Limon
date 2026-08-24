@@ -77,7 +77,7 @@ export function ReloadPrompt() {
             className="fixed inset-0 z-[999] bg-[#141414] flex flex-col items-center justify-center text-white"
           >
             <div className="flex flex-col items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-flame/10 border border-flame/20 text-flame animate-pulse">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lime/10 border border-lime/20 text-lime animate-pulse">
                 <Flame className="w-6 h-6" />
               </div>
               <p className="text-xs font-bold uppercase tracking-wider text-zinc-300">
@@ -104,7 +104,7 @@ export function ReloadPrompt() {
             <div className="relative">
               <div className="mb-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-flame/10 border border-flame/20 text-flame">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-lime/10 border border-lime/20 text-lime">
                     <Flame className="w-4 h-4" />
                   </div>
                   <div>
