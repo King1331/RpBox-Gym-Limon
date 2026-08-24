@@ -10,7 +10,7 @@ export default function HeroSection({ children }) {
     <section className="relative overflow-hidden shrink-0 min-h-[320px] flex flex-col justify-between">
       {/* Imagen de fondo en JPG con renderizado estable */}
       <img
-        src="/images/atleta3.jpg"
+        src="/images/atleta2.jpg"
         alt="Atleta durante una sesión de entrenamiento"
         className="absolute inset-0 h-full w-full object-cover object-top pointer-events-none select-none"
         onError={(e) => {
