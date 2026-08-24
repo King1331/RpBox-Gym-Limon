@@ -85,14 +85,24 @@
 }
 
 @layer base {
-  /* --- AJUSTE GLOBAL DE REM PARA BOTONES E ICONOS --- */
+  /* --- AJUSTE DINÁMICO DE REM POR TAMAÑO DE PANTALLA --- */
+  
+  /* 1. Teléfonos S/M (hasta ~390px, como iPhone 6.1"): Área táctil ampliada */
   html {
-    font-size: 20px; /* Incrementa proporcionalmente botones, navbars e iconos en celulares */
+    font-size: 18px;
   }
 
+  /* 2. Teléfonos L (6.7" en adelante / >390px): Escala intermedia estilizada */
+  @media (min-width: 391px) {
+    html {
+      font-size: 16.5px;
+    }
+  }
+
+  /* 3. Tablets y Laptops (768px+): Escala estándar */
   @media (min-width: 768px) {
     html {
-      font-size: 16px; /* Mantiene la escala estándar en tablets y laptops */
+      font-size: 16px;
     }
   }
 
