@@ -1,6 +1,6 @@
 import React from 'react';
-import { Switch, Route, useLocation } from 'wouter'; // Extraemos useLocation
-import { motion, AnimatePresence } from 'framer-motion'; // Traemos a Framer
+import { Switch, Route, useLocation } from 'wouter';
+import { motion, AnimatePresence } from 'framer-motion';
 import AppShell from './layouts/AppShell';
 import HomeScreen from './screens/HomeScreen';
 import RoutineScreen from './screens/RoutineScreen';
@@ -8,12 +8,12 @@ import ProgressScreen from './screens/ProgressScreen';
 import StaffScreen from './screens/StaffScreen';
 import { ReloadPrompt } from './components/ReloadPrompt';
 
-// Físicas de resorte nativo (Regla 4)
+// ⚡ Físicas de resorte MÁS RÁPIDAS Y LIGERAS
 const springTransition = {
   type: 'spring',
-  stiffness: 400,
-  damping: 40,
-  mass: 0.8,
+  stiffness: 600, // Más alto = se mueve mucho más rápido
+  damping: 35,    // Frena en seco sin retrasos
+  mass: 0.5,      // Más ligero = menos "inercia" pesada
 };
 
 export default function App() {
@@ -22,17 +22,15 @@ export default function App() {
   return (
     <>
       <AppShell>
-        {/* El AnimatePresence envuelve el Switch para "congelar" las vistas al salir */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={location} // Destruye y crea el DOM al cambiar de ruta
-            initial={{ opacity: 0, x: 20 }}
+            key={location}
+            initial={{ opacity: 0, x: 15 }} // Reducimos un poco la distancia de desplazamiento (de 20 a 15)
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
+            exit={{ opacity: 0, x: -15 }}
             transition={springTransition}
             className="flex flex-col flex-1 min-h-full w-full"
           >
-            {/* CLAVE NATIVA: Le forzamos el location a wouter para evitar destellos */}
             <Switch location={location}>
               <Route path="/" component={HomeScreen} />
               <Route path="/rutina" component={RoutineScreen} />
