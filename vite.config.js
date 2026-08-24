@@ -34,7 +34,10 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp}'],
         // Evitar que el SW guarde en caché el archivo de versión
-        navigateFallbackDenylist: [/^\/version.json/]
+        navigateFallbackDenylist: [/^\/version.json/],
+        // Obliga al nuevo Service Worker a activarse de inmediato
+        skipWaiting: true,
+        clientsClaim: true,
       }
     })
   ],
