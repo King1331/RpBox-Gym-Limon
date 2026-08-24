@@ -4,7 +4,7 @@
   "description": "Aplicación de Gym - Gestiona tus entrenamientos",
   "display": "fullscreen",
   "orientation": "portrait-primary",
-  "start_url": "/",
+  "start_url": "/?fullscreen=true",
   "scope": "/",
   "theme_color": "#000000",
   "background_color": "#000000",
