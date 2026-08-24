@@ -23,8 +23,8 @@ export default function HeroSection({ children }) {
       <div className="absolute inset-0 bg-gradient-to-r from-ink/70 to-transparent pointer-events-none" />
 
       <div className="relative flex flex-col z-10">
-        {/* Header superior limpio */}
-        <header className="flex items-center justify-end px-5 pt-6">
+        {/* Header superior adaptado al notch con safe-area */}
+        <header className="flex items-center justify-end px-5 pt-[calc(env(safe-area-inset-top)+1rem)]">
           <button
             type="button"
             onClick={notificationsModal.open}
