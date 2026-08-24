@@ -2,7 +2,7 @@
   "name": "RP Box",
   "short_name": "RP Box",
   "description": "Aplicación de Gym - Gestiona tus entrenamientos",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait-primary",
   "start_url": "/?fullscreen=true",
   "scope": "/",
