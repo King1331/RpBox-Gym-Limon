@@ -21,3 +21,17 @@ createRoot(rootElement, {
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+// --- NUEVO: Fuerza la revisión de actualizaciones de la PWA en caliente ---
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.ready.then((registration) => {
+      // Cada vez que el usuario entra o vuelve a enfocar la app (ej. la abre desde el celular)
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          registration.update();
+        }
+      });
+    });
+  });
+}

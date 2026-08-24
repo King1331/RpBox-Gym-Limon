@@ -27,7 +27,7 @@ export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    generateVersion(), // <--- Crea el version.json en el build
+    generateVersion(), 
     VitePWA({ 
       registerType: 'prompt',
       manifest: false, 
@@ -35,9 +35,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,jpg,jpeg,webp}'],
         // Evitar que el SW guarde en caché el archivo de versión
         navigateFallbackDenylist: [/^\/version.json/],
-        // Obliga al nuevo Service Worker a activarse de inmediato
-        skipWaiting: true,
-        clientsClaim: true,
+        // ¡Eliminamos skipWaiting y clientsClaim para que el prompt funcione!
       }
     })
   ],
@@ -47,5 +45,3 @@ export default defineConfig({
     },
   },
 });
-
-

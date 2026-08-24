@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRegisterSW } from 'virtual:pwa-register/react';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Flame } from 'lucide-react';
 
 export function ReloadPrompt() {
   const [location] = useLocation();
@@ -55,10 +56,9 @@ export function ReloadPrompt() {
   };
 
   const handleUpdate = async () => {
-    setIsUpdating(true); // Activa el estado visual de carga/transición
+    setIsUpdating(true);
     await updateServiceWorker(true);
     
-    // Pequeño delay de 400ms para que la animación de fundido se luzca antes del reload
     setTimeout(() => {
       window.location.reload();
     }, 400);
@@ -77,11 +77,8 @@ export function ReloadPrompt() {
             className="fixed inset-0 z-[999] bg-[#141414] flex flex-col items-center justify-center text-white"
           >
             <div className="flex flex-col items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-500/10 border border-orange-500/20 text-orange-500 animate-pulse">
-                <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
-                  <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-lime/10 border border-lime/20 text-lime animate-pulse">
+                <Flame className="w-6 h-6" />
               </div>
               <p className="text-xs font-bold uppercase tracking-wider text-zinc-300">
                 Actualizando RP Box...
@@ -107,11 +104,8 @@ export function ReloadPrompt() {
             <div className="relative">
               <div className="mb-2.5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-500/10 border border-orange-500/20 text-orange-500">
-                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                      <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-lime/10 border border-lime/20 text-lime">
+                    <Flame className="w-4 h-4" />
                   </div>
                   <div>
                     <h3 className="text-xs font-bold uppercase tracking-wider text-white">
@@ -130,14 +124,16 @@ export function ReloadPrompt() {
 
               <div className="flex items-center justify-end gap-2">
                 <button
+                  type="button"
                   onClick={close}
-                  className="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white rounded-lg transition-colors"
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-400 hover:text-white rounded-lg transition-colors cursor-pointer"
                 >
                   Después
                 </button>
                 <button
+                  type="button"
                   onClick={handleUpdate}
-                  className="px-3.5 py-1.5 text-xs font-semibold bg-white text-zinc-950 rounded-xl hover:bg-zinc-200 transition-all active:scale-95 shadow-sm"
+                  className="px-3.5 py-1.5 text-xs font-semibold bg-lime text-ink rounded-xl hover:bg-lime/90 transition-all active:scale-95 shadow-sm cursor-pointer"
                 >
                   Actualizar ahora
                 </button>
