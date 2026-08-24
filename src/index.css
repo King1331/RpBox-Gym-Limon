@@ -210,7 +210,7 @@
   }
 
   .bottom-nav {
-    position: fixed;
+  position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
@@ -222,7 +222,8 @@
     justify-content: space-between;
     border-top: 1px solid rgba(255, 255, 255, 0.05);
     background-color: rgba(20, 20, 20, 0.9);
-    padding: 0.75rem 1.5rem;
+    /* Combinamos el padding original lateral/superior con el safe area inferior dinámico */
+    padding: 0.75rem 1.5rem calc(0.75rem + env(safe-area-inset-bottom)) 1.5rem;
     backdrop-filter: blur(16px);
   }
 
