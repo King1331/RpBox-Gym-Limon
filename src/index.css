@@ -87,7 +87,7 @@
 @layer base {
   /* --- AJUSTE GLOBAL DE REM PARA BOTONES E ICONOS --- */
   html {
-    font-size: 18px; /* Incrementa proporcionalmente botones, navbars e iconos en celulares */
+    font-size: 20px; /* Incrementa proporcionalmente botones, navbars e iconos en celulares */
   }
 
   @media (min-width: 768px) {
