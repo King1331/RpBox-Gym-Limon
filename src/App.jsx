@@ -8,11 +8,11 @@ import ProgressScreen from './screens/ProgressScreen';
 import StaffScreen from './screens/StaffScreen';
 import { ReloadPrompt } from './components/ReloadPrompt';
 
-// Transición tween ligera para máximo rendimiento en tablets de bajos recursos
+// Transición tween ligera para crossfade suave y con alto rendimiento
 const lightTransition = {
   type: 'tween',
-  duration: 0.12,
-  ease: 'easeOut',
+  duration: 0.15,
+  ease: 'easeInOut', 
 };
 
 export default function App() {
@@ -24,9 +24,9 @@ export default function App() {
         <AnimatePresence mode="wait">
           <motion.div
             key={location}
-            initial={{ opacity: 0, x: 10 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={lightTransition}
             // Coincide exactamente con el bg-ink de tus pantallas (HomeScreen, etc.)
             className="flex flex-col flex-1 min-h-full w-full bg-ink"
