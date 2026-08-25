@@ -27,7 +27,7 @@ export default function ExerciseCard({
             {exercise.cue}
           </p>
         </div>
-        <div className="shrink-0 rounded-full bg-flame/10 px-2.5 py-1 text-[10px] sm:text-[11px] font-mono text-flame border border-flame/20 whitespace-nowrap">
+        <div className="shrink-0 rounded-full bg-ink/10 px-2.5 py-1 text-[10px] sm:text-[11px] font-mono text-white border border-white/20 whitespace-nowrap">
           {exercise.sets} × {exercise.reps}
         </div>
       </div>

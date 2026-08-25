@@ -24,7 +24,7 @@ export default function RoutineScreen() {
           Volver atrás
         </button>
 
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-lime">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-white">
           Martes · Día 03
         </span>
         <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
@@ -47,7 +47,7 @@ export default function RoutineScreen() {
               {completed} / 13 series
             </strong>
           </div>
-          <div className="flex size-12 items-center justify-center rounded-xl bg-lime/10 text-lime">
+          <div className="flex size-12 items-center justify-center rounded-xl bg-ink/10 text-white">
             <Dumbbell size={24} />
           </div>
         </section>

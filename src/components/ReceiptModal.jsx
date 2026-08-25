@@ -35,7 +35,7 @@ export default function ReceiptModal({ onClose }) {
         </div>
 
         {/* Agregamos un borde superior muy tenue y el texto con el acento flame */}
-        <div className="receipt border-t border-flame/10 pt-3" data-testid="receipt-simulation">
+        <div className="receipt border-t border-white/20 pt-3" data-testid="receipt-simulation">
           <h3 className="text-white font-semibold mb-2">SINPE MÓVIL</h3>
           <p className="opacity-80">Transacción exitosa</p>
           <div className="space-y-1 mt-3">

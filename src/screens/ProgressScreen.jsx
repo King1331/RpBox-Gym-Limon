@@ -28,7 +28,7 @@ export default function ProgressScreen() {
           Volver atrás
         </button>
 
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-lime">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-white">
           Datos de rendimiento
         </p>
         <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">

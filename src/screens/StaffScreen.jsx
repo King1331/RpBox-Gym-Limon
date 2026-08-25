@@ -30,7 +30,7 @@ export default function StaffScreen() {
           Volver atrás
         </button>
 
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-lime">
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-white">
           Panel interno · Staff
         </span>
         <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">

@@ -42,7 +42,7 @@ export default function NotificationsModal({ onClose }) {
               key={title}
               data-testid={`notification-${index + 1}`}
             >
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-lime/10 text-lime">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-ink/10 text-white">
                 <Icon className="size-5" />
               </div>
               <div className="flex flex-col">
