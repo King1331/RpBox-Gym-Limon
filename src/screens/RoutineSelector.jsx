@@ -5,8 +5,6 @@ import {
   Dumbbell, 
   Plus, 
   Play, 
-  ChevronDown, 
-  ChevronUp, 
   Sparkles, 
   ChevronLeft, 
   ChevronRight 
@@ -25,7 +23,6 @@ const DEFAULT_IMAGES = [
 export default function RoutineSelector() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState("coach");
-  const [openCardId, setOpenCardId] = useState(null);
   
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 2;
@@ -54,11 +51,6 @@ export default function RoutineSelector() {
   const handleTabChange = (newTab) => {
     setTab(newTab);
     setCurrentPage(1);
-    setOpenCardId(null);
-  };
-
-  const toggleAccordion = (id) => {
-    setOpenCardId(openCardId === id ? null : id);
   };
 
   return (
@@ -99,23 +91,34 @@ export default function RoutineSelector() {
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-bold text-paper">{rutinaEnCurso?.titulo}</h3>
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-white/90">
-    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-    Activa
-  </span>
-</div><p className="text-xs text-white/70 mb-3 font-medium">
-  {rutinaEnCurso?.musculos?.join(" · ") || "General"}</p><div className="flex items-center gap-3 text-xs text-white/60 mb-4 font-medium">
-  <span className="flex items-center gap-1">
-    <Clock size={13} /> {rutinaEnCurso?.duracion || 0} min
-  </span>
+                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                      Activa
+                    </span>
+                  </div>
+                  <p className="text-xs text-white/70 mb-3 font-medium">
+                    {rutinaEnCurso?.musculos?.join(" · ") || "General"}
+                  </p>
+                  <div className="flex items-center gap-3 text-xs text-white/60 mb-5 font-medium">
+                    <span className="flex items-center gap-1">
+                      <Clock size={13} /> {rutinaEnCurso?.duracion || 0} min
+                    </span>
                     <span className="flex items-center gap-1">
                       <Dumbbell size={13} /> {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
                     </span>
                   </div>
-                  <button 
+
+                  {/* Botón Píldora (En Curso) */}
+                  <button
+                    type="button"
                     onClick={() => setLocation("/routine")}
-                    className="primary-btn w-full flex items-center justify-center gap-2 py-2.5 text-sm"
+                    className="flex w-full items-center justify-between rounded-full bg-lime py-1.5 pl-5 pr-1.5 text-ink transition-transform active:scale-[0.98] cursor-pointer"
                   >
-                    <Play size={14} fill="currentColor" /> Continuar
+                    <span className="text-[13px] font-bold uppercase tracking-wide">
+                      Continuar
+                    </span>
+                    <span className="flex size-9 items-center justify-center rounded-full bg-ink">
+                      <Play className="size-4 fill-lime text-lime" aria-hidden="true" />
+                    </span>
                   </button>
                 </div>
               </div>
@@ -130,7 +133,7 @@ export default function RoutineSelector() {
                 onClick={() => handleTabChange("coach")}
                 className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${
                   tab === "coach" 
-                    ? "text-lime border-b-2 border-lime" 
+                    ? "text-white border-b-2 border-white" 
                     : "text-white/40 border-b-2 border-transparent"
                 }`}
               >
@@ -140,7 +143,7 @@ export default function RoutineSelector() {
                 onClick={() => handleTabChange("mio")}
                 className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${
                   tab === "mio" 
-                    ? "text-lime border-b-2 border-lime" 
+                    ? "text-white border-b-2 border-white" 
                     : "text-white/40 border-b-2 border-transparent"
                 }`}
               >
@@ -155,14 +158,14 @@ export default function RoutineSelector() {
                 animate={{ opacity: 1, height: "auto", marginBottom: 12 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 onClick={() => setLocation("/crear-rutina")}
-                className="primary-btn w-full flex items-center justify-center gap-2 py-2.5 text-sm overflow-hidden"
+                className="bg-lime text-ink font-bold rounded-xl w-full flex items-center justify-center gap-2 py-2.5 text-sm overflow-hidden active:scale-95 transition-all"
               >
                 <Plus size={16} /> Crear nueva
               </motion.button>
             )}
 
             {/* Lista Animada con Paginación */}
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence mode="wait">
               <motion.div
                 key={`${tab}-${currentPage}`}
                 initial={{ opacity: 0 }}
@@ -178,19 +181,20 @@ export default function RoutineSelector() {
                   </div>
                 ) : (
                   paginatedLista.map((rutina, index) => {
-                    const isOpen = openCardId === rutina.id;
                     const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
 
                     return (
                       <div 
                         key={rutina.id} 
-                        className="rounded-xl overflow-hidden border border-ink-line bg-cover bg-center transition-all duration-200"
-                        style={{
-                          backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.88), rgba(18, 18, 20, 0.96)), url(${bgImage})`
-                        }}
+                        className="rounded-xl overflow-hidden border border-ink-line transition-all duration-200"
                       >
-                        {/* Card Header */}
-                        <div className="p-3">
+                        {/* Cabecera con la imagen de fondo */}
+                        <div 
+                          className="p-3 bg-cover bg-center"
+                          style={{
+                            backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.88), rgba(18, 18, 20, 0.96)), url(${bgImage})`
+                          }}
+                        >
                           <div className="flex items-start justify-between mb-2">
                             <h3 className="text-sm font-bold text-paper">{rutina.titulo}</h3>
                             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/70 font-medium">
@@ -202,7 +206,7 @@ export default function RoutineSelector() {
                             {rutina.musculos?.join(" · ") || "General"}
                           </p>
 
-                          <div className="flex items-center gap-3 text-[11px] text-white/60 mb-3 font-medium">
+                          <div className="flex items-center gap-3 text-[11px] text-white/60 font-medium">
                             <span className="flex items-center gap-0.5">
                               <Clock size={11} /> {rutina.duracion} min
                             </span>
@@ -210,45 +214,62 @@ export default function RoutineSelector() {
                               <Dumbbell size={11} /> {rutina.ejercicios?.length || 0}
                             </span>
                           </div>
-
-                          <div className="flex gap-2">
-                            <button 
-                              onClick={() => setLocation(`/routine/${rutina.id}`)}
-                              className="primary-btn flex-1 flex items-center justify-center gap-1.5 py-2 text-xs"
-                            >
-                              <Play size={12} fill="currentColor" /> Empezar
-                            </button>
-                            <button 
-                              onClick={() => toggleAccordion(rutina.id)} 
-                              className="secondary-btn px-2.5 flex items-center"
-                            >
-                              {isOpen ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                            </button>
-                          </div>
                         </div>
 
-                        {/* Acordeón Animado */}
-                        <AnimatePresence>
-                          {isOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="overflow-hidden border-t border-ink-line bg-ink/90 px-3 pb-3 pt-2 space-y-1.5"
-                            >
-                              {rutina.ejercicios?.length ? (
-                                rutina.ejercicios.map((ej, idx) => (
-                                  <div key={idx} className="text-[11px] text-white/70 py-1 font-medium">
-                                    {idx + 1}. {ej.nombre || ej}
-                                  </div>
-                                ))
-                              ) : (
-                                <p className="text-[11px] text-white/40 py-2">Sin ejercicios</p>
-                              )}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                        {/* Cuerpo inferior con fondo sólido (Ejercicios + Botón Empezar) */}
+                        <div className="border-t border-ink-line bg-ink/95 px-3 py-3">
+                          <div className="mb-3">
+                            {rutina.ejercicios?.length ? (
+                              <ul className="flex flex-col gap-1.5">
+                                {rutina.ejercicios.map((ej, idx) => {
+                                  const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                                  const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series · 10 reps');
+                                  const exIndex = String(idx + 1).padStart(2, '0');
+                                  
+                                  return (
+                                    <li
+                                      key={idx}
+                                      className="flex items-center gap-3 rounded-xl bg-white/[0.03] p-2 border border-white/[0.02]"
+                                    >
+                                      <span
+                                        className={`flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                                          idx === 0 ? 'bg-white text-ink' : 'bg-white/5 text-white/40'
+                                        }`}
+                                      >
+                                        {exIndex}
+                                      </span>
+                                      <div className="min-w-0 flex-1">
+                                        <p className="truncate text-xs font-semibold text-paper">
+                                          {exName}
+                                        </p>
+                                        <p className="text-[10px] text-white/40">{exDetail}</p>
+                                      </div>
+                                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full ring-1 ring-white/10">
+                                        <ChevronRight className="size-3 text-white/50" aria-hidden="true" />
+                                      </span>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            ) : (
+                              <p className="text-[11px] text-white/40 py-1">Sin ejercicios</p>
+                            )}
+                          </div>
+
+                          {/* Botón Píldora (Empezar) */}
+                          <button
+                            type="button"
+                            onClick={() => setLocation(`/routine/${rutina.id}`)}
+                            className="flex w-full items-center justify-between rounded-full bg-lime py-1.5 pl-4 pr-1.5 text-ink transition-transform active:scale-[0.98] cursor-pointer"
+                          >
+                            <span className="text-[11px] font-bold uppercase tracking-wide">
+                              Empezar
+                            </span>
+                            <span className="flex size-7 items-center justify-center rounded-full bg-ink">
+                              <Play className="size-3 fill-lime text-lime" aria-hidden="true" />
+                            </span>
+                          </button>
+                        </div>
                       </div>
                     );
                   })
