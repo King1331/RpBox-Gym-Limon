@@ -17,9 +17,9 @@ import AnimatedPage from "../components/AnimatedPage";
 import { rutinasMock } from "../lib/rutinasMock";
 
 const DEFAULT_IMAGES = [
-  "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop"
+  "images/rutinapierna.jpg",
+  "images/pecho-supremo.jpg",
+  "images/pierna-hipertrofia.jpg"
 ];
 
 export default function RoutineSelector() {
@@ -30,10 +30,20 @@ export default function RoutineSelector() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 2;
 
-  const rutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
+  const rawRutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
+  const rutinaEnCurso = rawRutinaEnCurso?.titulo === "Pierna y pantorilla" 
+    ? { ...rawRutinaEnCurso, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
+    : rawRutinaEnCurso;
+
   const totalCoach = rutinasMock.filter((r) => r.origen === "coach" && r.visible).length;
   const totalMios = rutinasMock.filter((r) => r.origen === "mio" && r.visible).length;
-  const lista = rutinasMock.filter((r) => r.origen === tab && r.visible);
+  
+  const lista = rutinasMock
+    .filter((r) => r.origen === tab && r.visible)
+    .map(r => r.titulo === "Pierna y pantorilla" 
+      ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
+      : r
+    );
 
   const totalPages = Math.ceil(lista.length / ITEMS_PER_PAGE);
   const paginatedLista = lista.slice(
@@ -85,18 +95,18 @@ export default function RoutineSelector() {
                   backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.85), rgba(18, 18, 20, 0.95)), url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
                 }}
               >
-                <div className="backdrop-blur-[2px] -m-4 p-4">
+                <div className="p-0">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-bold text-paper">{rutinaEnCurso?.titulo}</h3>
-                    <span className="w-2 h-2 rounded-full bg-lime animate-pulse" />
-                  </div>
-                  <p className="text-xs text-white/50 mb-3">
-                    {rutinaEnCurso?.musculos?.join(" · ") || "General"}
-                  </p>
-                  <div className="flex items-center gap-3 text-xs text-white/40 mb-4">
-                    <span className="flex items-center gap-1">
-                      <Clock size={13} /> {rutinaEnCurso?.duracion || 0} min
-                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-white/90">
+    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+    Activa
+  </span>
+</div><p className="text-xs text-white/70 mb-3 font-medium">
+  {rutinaEnCurso?.musculos?.join(" · ") || "General"}</p><div className="flex items-center gap-3 text-xs text-white/60 mb-4 font-medium">
+  <span className="flex items-center gap-1">
+    <Clock size={13} /> {rutinaEnCurso?.duracion || 0} min
+  </span>
                     <span className="flex items-center gap-1">
                       <Dumbbell size={13} /> {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
                     </span>
@@ -140,23 +150,26 @@ export default function RoutineSelector() {
 
             {/* Botón Crear */}
             {tab === "mio" && (
-              <button
+              <motion.button
+                initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                animate={{ opacity: 1, height: "auto", marginBottom: 12 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                 onClick={() => setLocation("/crear-rutina")}
-                className="primary-btn w-full flex items-center justify-center gap-2 py-2.5 mb-3 text-sm"
+                className="primary-btn w-full flex items-center justify-center gap-2 py-2.5 text-sm overflow-hidden"
               >
                 <Plus size={16} /> Crear nueva
-              </button>
+              </motion.button>
             )}
 
             {/* Lista Animada con Paginación */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="popLayout">
               <motion.div
                 key={`${tab}-${currentPage}`}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-2"
+                className="space-y-2 relative w-full"
               >
                 {lista.length === 0 ? (
                   <div className="glass-card flex flex-col items-center justify-center py-6">
@@ -176,20 +189,20 @@ export default function RoutineSelector() {
                           backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.88), rgba(18, 18, 20, 0.96)), url(${bgImage})`
                         }}
                       >
-                        {/* Card Header con difuminado */}
-                        <div className="p-3 backdrop-blur-[2px]">
+                        {/* Card Header */}
+                        <div className="p-3">
                           <div className="flex items-start justify-between mb-2">
                             <h3 className="text-sm font-bold text-paper">{rutina.titulo}</h3>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/60">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/70 font-medium">
                               {rutina.origen === "coach" ? "Coach" : "Mía"}
                             </span>
                           </div>
 
-                          <p className="text-[11px] text-white/50 mb-2">
+                          <p className="text-[11px] text-white/70 mb-2 font-medium">
                             {rutina.musculos?.join(" · ") || "General"}
                           </p>
 
-                          <div className="flex items-center gap-3 text-[11px] text-white/40 mb-3">
+                          <div className="flex items-center gap-3 text-[11px] text-white/60 mb-3 font-medium">
                             <span className="flex items-center gap-0.5">
                               <Clock size={11} /> {rutina.duracion} min
                             </span>
@@ -222,11 +235,11 @@ export default function RoutineSelector() {
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2 }}
-                              className="overflow-hidden border-t border-ink-line bg-ink/80 backdrop-blur-md px-3 pb-3 pt-2 space-y-1.5"
+                              className="overflow-hidden border-t border-ink-line bg-ink/90 px-3 pb-3 pt-2 space-y-1.5"
                             >
                               {rutina.ejercicios?.length ? (
                                 rutina.ejercicios.map((ej, idx) => (
-                                  <div key={idx} className="text-[11px] text-white/50 py-1">
+                                  <div key={idx} className="text-[11px] text-white/70 py-1 font-medium">
                                     {idx + 1}. {ej.nombre || ej}
                                   </div>
                                 ))
