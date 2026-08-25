@@ -1,26 +1,22 @@
 import { motion } from "framer-motion";
 
-// Físicas de resorte nativo (Spring)
-const springTransition = {
-  type: "spring",
-  stiffness: 400,
-  damping: 40, // Un poco más de amortiguación para transiciones de página completas
-  mass: 0.8,
+// Transición ligera y rápida (Tween)
+const lightTransition = {
+  type: "tween",
+  duration: 0.15,
+  ease: "easeInOut",
 };
 
-// Estados de la animación (Solo GPU: Opacity y Transform)
+// Variantes limpias basadas únicamente en opacidad para evitar saltos visuales o scroll horizontal
 const pageVariants = {
   initial: { 
-    opacity: 0, 
-    x: 25 // Entra sutilmente desde la derecha
+    opacity: 0 
   },
   animate: { 
-    opacity: 1, 
-    x: 0 
+    opacity: 1 
   },
   exit: { 
-    opacity: 0, 
-    x: -25 // Sale sutilmente hacia la izquierda
+    opacity: 0 
   }
 };
 
@@ -31,9 +27,7 @@ export default function AnimatedPage({ children, className = "" }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={springTransition}
-      // IMPORTANTE: Nota cómo NO hay clases "transition-" o "duration-" de Tailwind aquí.
-      // Solo clases estructurales. Framer Motion tiene el control total de la animación.
+      transition={lightTransition}
       className={`flex flex-col flex-1 w-full h-full ${className}`}
     >
       {children}

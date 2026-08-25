@@ -15,9 +15,9 @@ import ProgressScreen from '@/screens/ProgressScreen';
 import StaffScreen from '@/screens/StaffScreen';
 import { ReloadPrompt } from '@/components/ReloadPrompt';
 
-const lightTransition = {
+const crossfadeTransition = {
   type: 'tween',
-  duration: 0.15,
+  duration: 0.2, // Un poco más suave para el crossfade
   ease: 'easeInOut', 
 };
 
@@ -26,34 +26,38 @@ export default function App() {
 
   return (
     <>
+      {/* Asegúrate de que AppShell o su contenedor interno tenga position: relative */}
       <AppShell>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={lightTransition}
-            className="flex flex-col flex-1 min-h-full w-full bg-ink"
-          >
-            <Switch location={location}>
-              <Route path="/" component={HomeScreen} />
-              
-              {/* Rutinas */}
-              <Route path="/rutinas" component={RoutineSelector} />
-              <Route path="/crear-rutina" component={RoutineCreator} />
-              <Route path="/rutina" component={RoutineScreen} />
-              <Route path="/routine" component={RoutineScreen} />
-              
-              <Route path="/progreso" component={ProgressScreen} />
-              <Route path="/staff" component={StaffScreen} />
-              
-              <Route>
-                <HomeScreen />
-              </Route>
-            </Switch>
-          </motion.div>
-        </AnimatePresence>
+        <div className="relative flex flex-col flex-1 min-h-full w-full overflow-hidden">
+          {/* Sin mode="wait" para permitir que se solapen */}
+          <AnimatePresence>
+            <motion.div
+              key={location}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={crossfadeTransition}
+              className="absolute inset-0 flex flex-col w-full h-full bg-ink overflow-y-auto"
+            >
+              <Switch location={location}>
+                <Route path="/" component={HomeScreen} />
+                
+                {/* Rutinas */}
+                <Route path="/rutinas" component={RoutineSelector} />
+                <Route path="/crear-rutina" component={RoutineCreator} />
+                <Route path="/rutina" component={RoutineScreen} />
+                <Route path="/routine" component={RoutineScreen} />
+                
+                <Route path="/progreso" component={ProgressScreen} />
+                <Route path="/staff" component={StaffScreen} />
+                
+                <Route>
+                  <HomeScreen />
+                </Route>
+              </Switch>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </AppShell>
 
       <ReloadPrompt />
