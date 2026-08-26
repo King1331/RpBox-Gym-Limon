@@ -12,7 +12,6 @@ import {
   Layers,
   ArrowRight,
   ChevronDown,
-  ChevronUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "../components/HeroSection";
@@ -82,7 +81,7 @@ export default function RoutineSelector() {
   const handleTabChange = (newTab) => {
     setTab(newTab);
     setCurrentPage(1);
-    setExpandedRoutineId(null); // Cerrar acordeón al cambiar de pestaña
+    setExpandedRoutineId(null);
   };
 
   const toggleExpand = (id) => {
@@ -101,7 +100,7 @@ export default function RoutineSelector() {
             </span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-black leading-[0.95] tracking-tight text-paper text-balance">
+          <h1 className="text-4xl sm:text-5xl font-semibold leading-[0.95] tracking-tight text-paper text-balance">
             Elige tu
             <br />
             rutina.
@@ -118,9 +117,9 @@ export default function RoutineSelector() {
           {rutinaEnCurso && (
             <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
-                  <span className="flex items-center justify-center w-5 h-5 rounded-full border border-flame/60">
-                    <Flame size={13} className="text-flame" />
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
+                  <span className="flex items-center justify-center w-5 h-5 ">
+                    <Flame size={16} className="text-flame" />
                   </span>
                   Sesión en progreso
                 </p>
@@ -138,17 +137,17 @@ export default function RoutineSelector() {
                     backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/60 to-ink/20" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-ink/20 to-transparent" />
 
                 {/* Contenido sin fondos oscuros bloqueantes */}
                 <div className="relative z-10 p-4 flex flex-col justify-between min-h-[160px]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white/90 tracking-wide uppercase mb-1.5">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         Activa hoy
                       </span>
-                      <h3 className="text-xl font-black text-paper leading-tight tracking-tight">
+                      <h3 className="text-xl font-semibold text-paper leading-tight tracking-tight">
                         {rutinaEnCurso?.titulo}
                       </h3>
                       <p className="text-[11px] text-white/60 mt-0.5">
@@ -156,9 +155,7 @@ export default function RoutineSelector() {
                       </p>
                     </div>
 
-                    <div className="w-10 h-10 rounded-full bg-paper text-ink flex items-center justify-center shrink-0 shadow-md">
-                      <Play className="size-4 fill-ink text-ink ml-0.5" />
-                    </div>
+                   
                   </div>
 
                   <div className="pt-3 flex items-center justify-between border-t border-white/10 mt-3">
@@ -173,7 +170,7 @@ export default function RoutineSelector() {
                       </span>
                     </div>
 
-                    <span className="text-[11px] font-bold text-paper uppercase tracking-wider flex items-center gap-1">
+                    <span className="text-[11px] font-semibold text-paper uppercase tracking-wider flex items-center gap-1">
                       Continuar <ArrowRight size={13} />
                     </span>
                   </div>
@@ -191,7 +188,7 @@ export default function RoutineSelector() {
                 whileTap={{ scale: 0.97 }}
                 type="button"
                 onClick={() => handleTabChange("coach")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
                   tab === "coach" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
@@ -209,7 +206,7 @@ export default function RoutineSelector() {
                 whileTap={{ scale: 0.97 }}
                 type="button"
                 onClick={() => handleTabChange("mio")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
                   tab === "mio" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
@@ -240,7 +237,7 @@ export default function RoutineSelector() {
                     <Plus size={20} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-paper">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-paper">
                       Crear nueva rutina
                     </h4>
                     <p className="text-[11px] text-white/50 mt-0.5">
@@ -270,7 +267,7 @@ export default function RoutineSelector() {
                     <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
                       <Layers size={22} />
                     </div>
-                    <h4 className="text-sm font-bold text-paper">No hay rutinas disponibles</h4>
+                    <h4 className="text-sm font-semibold text-paper">No hay rutinas disponibles</h4>
                     <p className="text-xs text-white/40 mt-1 max-w-[220px]">
                       {tab === "mio"
                         ? "Empieza creando tu primer plan personalizado con el botón superior."
@@ -297,14 +294,14 @@ export default function RoutineSelector() {
                           }}
                         >
                           {/* Sutil overlay solo para contrastar la tipografía */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-ink/20 to-transparent" />
 
                           <div className="relative z-10 flex items-start justify-between gap-2">
                             <div>
-                              <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/60 backdrop-blur-sm border border-white/10">
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/60 backdrop-blur-sm border border-white/10">
                                 {rutina.origen === "coach" ? "Coach" : "Personal"}
                               </span>
-                              <h3 className="text-base font-extrabold text-paper mt-1.5">
+                              <h3 className="text-base font-semibold text-paper mt-1.5">
                                 {rutina.titulo}
                               </h3>
                             </div>
@@ -328,7 +325,7 @@ export default function RoutineSelector() {
                           <button
                             type="button"
                             onClick={() => toggleExpand(rutina.id)}
-                            className="w-full flex items-center justify-between py-2 text-xs font-bold text-paper/80 hover:text-paper transition-colors"
+                            className="w-full flex items-center justify-between py-2 text-xs font-semibold text-paper/80 hover:text-paper transition-colors"
                           >
                             <span className="flex items-center gap-1.5">
                               <Dumbbell size={14} className="text-white/50" />
@@ -397,11 +394,11 @@ export default function RoutineSelector() {
                             whileTap={{ scale: 0.98 }}
                             type="button"
                             onClick={() => setLocation(`/routine/${rutina.id}`)}
-                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-paper py-2.5 pl-4 pr-2 text-ink font-black text-xs uppercase tracking-wider shadow-sm hover:bg-white/90 cursor-pointer"
+                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm hover:bg-white/90 cursor-pointer"
                           >
                             <span>Comenzar rutina</span>
-                            <div className="w-6 h-6 rounded-lg bg-ink text-paper flex items-center justify-center">
-                              <Play size={11} className="fill-paper ml-0.5" />
+                            <div className="w-6 h-6 rounded-lg bg-ink text-lime flex items-center justify-center">
+                              <Play size={11} className="fill-lime ml-0.5" />
                             </div>
                           </motion.button>
                         </div>
@@ -416,7 +413,7 @@ export default function RoutineSelector() {
             {totalPages > 1 && (
               <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/50">
                 <span className="text-[11px]">
-                  Página <strong className="text-paper">{currentPage}</strong> de {totalPages}
+                  Página <strong className="text-paper font-semibold">{currentPage}</strong> de {totalPages}
                 </span>
                 
                 <div className="flex items-center gap-1.5">
