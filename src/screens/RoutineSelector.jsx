@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useLocation } from "wouter";
 import { 
   Clock, 
@@ -7,7 +7,10 @@ import {
   Play, 
   Sparkles, 
   ChevronLeft, 
-  ChevronRight 
+  ChevronRight,
+  Flame,
+  Layers,
+  ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "../components/HeroSection";
@@ -20,33 +23,58 @@ const DEFAULT_IMAGES = [
   "images/pierna-hipertrofia.jpg"
 ];
 
+// Variantes de animación escalonada estilo iOS
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+    },
+  },
+  exit: { opacity: 0, transition: { duration: 0.15 } },
+};
+
+const cardItemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.25, ease: [0.32, 0.72, 0, 1] },
+  },
+};
+
 export default function RoutineSelector() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState("coach");
-  
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 2;
 
+  // Rutina en curso
   const rawRutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
-  const rutinaEnCurso = rawRutinaEnCurso?.titulo === "Pierna y pantorilla" 
-    ? { ...rawRutinaEnCurso, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
-    : rawRutinaEnCurso;
+  const rutinaEnCurso = useMemo(() => {
+    if (!rawRutinaEnCurso) return null;
+    return rawRutinaEnCurso.titulo === "Pierna y pantorilla"
+      ? { ...rawRutinaEnCurso, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" }
+      : rawRutinaEnCurso;
+  }, [rawRutinaEnCurso]);
 
-  const totalCoach = rutinasMock.filter((r) => r.origen === "coach" && r.visible).length;
-  const totalMios = rutinasMock.filter((r) => r.origen === "mio" && r.visible).length;
+  const totalCoach = useMemo(() => rutinasMock.filter((r) => r.origen === "coach" && r.visible).length, []);
+  const totalMios = useMemo(() => rutinasMock.filter((r) => r.origen === "mio" && r.visible).length, []);
   
-  const lista = rutinasMock
-    .filter((r) => r.origen === tab && r.visible)
-    .map(r => r.titulo === "Pierna y pantorilla" 
-      ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
-      : r
-    );
+  const lista = useMemo(() => {
+    return rutinasMock
+      .filter((r) => r.origen === tab && r.visible)
+      .map(r => r.titulo === "Pierna y pantorilla" 
+        ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
+        : r
+      );
+  }, [tab]);
 
   const totalPages = Math.ceil(lista.length / ITEMS_PER_PAGE);
-  const paginatedLista = lista.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const paginatedLista = useMemo(() => {
+    return lista.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  }, [lista, currentPage]);
 
   const handleTabChange = (newTab) => {
     setTab(newTab);
@@ -57,252 +85,324 @@ export default function RoutineSelector() {
     <AnimatedPage>
       <div className="flex flex-col bg-ink text-paper min-h-screen">
         
-        {/* Hero Section */}
+        {/* ================= HERO SECTION ================= */}
         <HeroSection>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-white/60">
-            Entrenamientos
-          </p>
-          <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 text-[10px] font-bold tracking-widest uppercase">
+              Programación
+            </span>
+          </div>
+
+          <h1 className="text-4xl sm:text-5xl font-black leading-[0.95] tracking-tight text-paper text-balance">
             Elige tu
             <br />
             rutina.
           </h1>
-          <p className="mt-3 text-base font-medium text-white/70">
-            En curso, del coach o tus creaciones
+          <p className="mt-2 text-xs font-medium text-white/65 leading-relaxed text-balance">
+            Explora tus entrenamientos activos, los asignados por tu coach o crea un nuevo plan a tu medida.
           </p>
         </HeroSection>
 
-        {/* Main Content */}
-        <main className="flex flex-col gap-3 px-5 pb-28 pt-4">
+        {/* ================= MAIN CONTENT ================= */}
+        <main className="flex flex-col gap-5 px-4 pb-36 pt-2">
           
-          {/* Sección: En Curso */}
+          {/* ================= SECCIÓN: RUTINA EN CURSO ================= */}
           {rutinaEnCurso && (
-            <section>
-              <div className="mb-2 px-1">
-                <p className="text-[11px] font-semibold uppercase tracking-widest text-white/40">En curso</p>
+            <section className="space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
+                  <Flame size={13} className="text-white/60" />
+                  Sesión en progreso
+                </p>
               </div>
-              <div 
-                className="rounded-2xl p-4 border border-ink-line relative overflow-hidden bg-cover bg-center shadow-lg transition-all"
-                style={{
-                  backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.85), rgba(18, 18, 20, 0.95)), url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
-                }}
+
+              <motion.div 
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setLocation("/routine")}
+                className="touch-press relative rounded-2xl overflow-hidden border border-ink-line group cursor-pointer shadow-sm"
               >
-                <div className="p-0">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-bold text-paper">{rutinaEnCurso?.titulo}</h3>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-xs font-medium text-white/90">
-                      <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                      Activa
-                    </span>
-                  </div>
-                  <p className="text-xs text-white/70 mb-3 font-medium">
-                    {rutinaEnCurso?.musculos?.join(" · ") || "General"}
-                  </p>
-                  <div className="flex items-center gap-3 text-xs text-white/60 mb-5 font-medium">
-                    <span className="flex items-center gap-1">
-                      <Clock size={13} /> {rutinaEnCurso?.duracion || 0} min
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Dumbbell size={13} /> {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
-                    </span>
+                {/* Foto destacada con gradiente suave solo para lectura */}
+                <div 
+                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  style={{
+                    backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/60 to-ink/20" />
+
+                {/* Contenido sin fondos oscuros bloqueantes */}
+                <div className="relative z-10 p-4 flex flex-col justify-between min-h-[160px]">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-bold text-white/90 tracking-wide uppercase mb-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                        Activa hoy
+                      </span>
+                      <h3 className="text-xl font-black text-paper leading-tight tracking-tight">
+                        {rutinaEnCurso?.titulo}
+                      </h3>
+                      <p className="text-[11px] text-white/60 mt-0.5">
+                        {rutinaEnCurso?.musculos?.join(" · ") || "Cuerpo completo"}
+                      </p>
+                    </div>
+
+                    <div className="w-10 h-10 rounded-full bg-paper text-ink flex items-center justify-center shrink-0 shadow-md">
+                      <Play className="size-4 fill-ink text-ink ml-0.5" />
+                    </div>
                   </div>
 
-                  {/* Botón Píldora (En Curso) */}
-                  <button
-                    type="button"
-                    onClick={() => setLocation("/routine")}
-                    className="flex w-full items-center justify-between rounded-full bg-lime py-1.5 pl-5 pr-1.5 text-ink transition-transform active:scale-[0.98] cursor-pointer"
-                  >
-                    <span className="text-[13px] font-bold uppercase tracking-wide">
-                      Continuar
+                  <div className="pt-3 flex items-center justify-between border-t border-white/10 mt-3">
+                    <div className="flex items-center gap-3 text-xs text-white/70">
+                      <span className="flex items-center gap-1">
+                        <Clock size={12} className="text-white/60" />
+                        {rutinaEnCurso?.duracion || 0} 
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Dumbbell size={12} className="text-white/60" />
+                        {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
+                      </span>
+                    </div>
+
+                    <span className="text-[11px] font-bold text-paper uppercase tracking-wider flex items-center gap-1">
+                      Continuar <ArrowRight size={13} />
                     </span>
-                    <span className="flex size-9 items-center justify-center rounded-full bg-ink">
-                      <Play className="size-4 fill-lime text-lime" aria-hidden="true" />
-                    </span>
-                  </button>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
             </section>
           )}
 
-          {/* Sección: Del Coach / Mis Rutinas */}
-          <section>
-            {/* Tabs */}
-            <div className="flex gap-2 border-b border-ink-line mb-3">
-              <button
+          {/* ================= SECCIÓN: EXPLORADOR DE RUTINAS ================= */}
+          <section className="space-y-3">
+            
+            {/* iOS Segmented Control */}
+            <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line relative">
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                type="button"
                 onClick={() => handleTabChange("coach")}
-                className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${
-                  tab === "coach" 
-                    ? "text-white border-b-2 border-white" 
-                    : "text-white/40 border-b-2 border-transparent"
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                  tab === "coach" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
-                Del Coach ({totalCoach})
-              </button>
-              <button
+                {tab === "coach" && (
+                  <motion.div
+                    layoutId="activeRoutineTab"
+                    className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
+                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Coach <span className={`text-[10px] ${tab === "coach" ? "text-ink/70" : "text-white/30"}`}>({totalCoach})</span>
+              </motion.button>
+
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                type="button"
                 onClick={() => handleTabChange("mio")}
-                className={`pb-2 text-xs font-bold uppercase tracking-widest transition-colors ${
-                  tab === "mio" 
-                    ? "text-white border-b-2 border-white" 
-                    : "text-white/40 border-b-2 border-transparent"
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                  tab === "mio" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
-                Mis Rutinas ({totalMios})
-              </button>
+                {tab === "mio" && (
+                  <motion.div
+                    layoutId="activeRoutineTab"
+                    className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
+                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                  />
+                )}
+                Mis Rutinas <span className={`text-[10px] ${tab === "mio" ? "text-ink/70" : "text-white/30"}`}>({totalMios})</span>
+              </motion.button>
             </div>
 
-            {/* Botón Crear */}
+            {/* ================= NUEVO DISEÑO: BOTÓN CREAR RUTINA ================= */}
             {tab === "mio" && (
               <motion.button
-                initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-                animate={{ opacity: 1, height: "auto", marginBottom: 12 }}
-                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
                 onClick={() => setLocation("/crear-rutina")}
-                className="bg-lime text-ink font-bold rounded-xl w-full flex items-center justify-center gap-2 py-2.5 text-sm overflow-hidden active:scale-95 transition-all"
+                className="touch-press w-full p-3.5 rounded-2xl bg-ink-soft border border-ink-line hover:border-white/30 flex items-center justify-between group transition-all shadow-sm text-left"
               >
-                <Plus size={16} /> Crear nueva
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-paper text-ink flex items-center justify-center shrink-0 shadow-sm">
+                    <Plus size={20} strokeWidth={2.5} />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-paper">
+                      Crear nueva rutina
+                    </h4>
+                    <p className="text-[11px] text-white/50 mt-0.5">
+                      Configura días, grupos musculares y ejercicios.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/40 group-hover:text-paper group-hover:bg-white/10 transition-colors shrink-0">
+                  <ChevronRight size={15} strokeWidth={2.5} />
+                </div>
               </motion.button>
             )}
 
-            {/* Lista Animada con Paginación */}
+            {/* ================= LISTA DE RUTINAS (FOTO LIMPIA SIN FONDOS PESADOS) ================= */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${tab}-${currentPage}`}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="space-y-2 relative w-full"
+                variants={listContainerVariants}
+                initial="hidden"
+                animate="show"
+                exit="exit"
+                className="space-y-3"
               >
                 {lista.length === 0 ? (
-                  <div className="glass-card flex flex-col items-center justify-center py-6">
-                    <Sparkles size={24} className="text-white/30 mb-2" />
-                    <p className="text-xs text-white/50">No hay rutinas</p>
+                  <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-10 px-4 text-center">
+                    <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
+                      <Layers size={22} />
+                    </div>
+                    <h4 className="text-sm font-bold text-paper">No hay rutinas disponibles</h4>
+                    <p className="text-xs text-white/40 mt-1 max-w-[220px]">
+                      {tab === "mio"
+                        ? "Empieza creando tu primer plan personalizado con el botón superior."
+                        : "Tu coach aún no ha compartido rutinas contigo."}
+                    </p>
                   </div>
                 ) : (
                   paginatedLista.map((rutina, index) => {
                     const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
+                    const exercises = rutina.ejercicios || [];
 
                     return (
-                      <div 
+                      <motion.div 
                         key={rutina.id} 
-                        className="rounded-xl overflow-hidden border border-ink-line transition-all duration-200"
+                        variants={cardItemVariants}
+                        className="border border-ink-line rounded-2xl overflow-hidden transition-all shadow-sm"
                       >
-                        {/* Cabecera con la imagen de fondo */}
+                        {/* Cabecera: Foto como protagonista con gradiente mínimo */}
                         <div 
-                          className="p-3 bg-cover bg-center"
+                          className="relative p-3.5 bg-cover bg-center min-h-[110px] flex flex-col justify-between"
                           style={{
-                            backgroundImage: `linear-gradient(to bottom, rgba(18, 18, 20, 0.88), rgba(18, 18, 20, 0.96)), url(${bgImage})`
+                            backgroundImage: `url(${bgImage})`
                           }}
                         >
-                          <div className="flex items-start justify-between mb-2">
-                            <h3 className="text-sm font-bold text-paper">{rutina.titulo}</h3>
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-white/10 border border-white/15 text-white/70 font-medium">
-                              {rutina.origen === "coach" ? "Coach" : "Mía"}
-                            </span>
+                          {/* Sutil overlay solo para contrastar la tipografía */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
+
+                          <div className="relative z-10 flex items-start justify-between gap-2">
+                            <div>
+                              <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/60 backdrop-blur-sm border border-white/10">
+                                {rutina.origen === "coach" ? "Coach" : "Personal"}
+                              </span>
+                              <h3 className="text-base font-extrabold text-paper mt-1.5">
+                                {rutina.titulo}
+                              </h3>
+                            </div>
+
+                            <div className="flex items-center gap-1.5 bg-ink/70 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
+                              <Clock size={12} className="text-white/60" />
+                              <span>{rutina.duracion} </span>
+                            </div>
                           </div>
 
-                          <p className="text-[11px] text-white/70 mb-2 font-medium">
-                            {rutina.musculos?.join(" · ") || "General"}
-                          </p>
-
-                          <div className="flex items-center gap-3 text-[11px] text-white/60 font-medium">
-                            <span className="flex items-center gap-0.5">
-                              <Clock size={11} /> {rutina.duracion} min
-                            </span>
-                            <span className="flex items-center gap-0.5">
-                              <Dumbbell size={11} /> {rutina.ejercicios?.length || 0}
+                          <div className="relative z-10 flex items-center gap-2 mt-2">
+                            <span className="text-[11px] font-medium text-white/70">
+                              {rutina.musculos?.join(" · ") || "Cuerpo completo"}
                             </span>
                           </div>
                         </div>
 
-                        {/* Cuerpo inferior con fondo sólido (Ejercicios + Botón Empezar) */}
-                        <div className="border-t border-ink-line bg-ink/95 px-3 py-3">
-                          <div className="mb-3">
-                            {rutina.ejercicios?.length ? (
-                              <ul className="flex flex-col gap-1.5">
-                                {rutina.ejercicios.map((ej, idx) => {
-                                  const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
-                                  const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series · 10 reps');
-                                  const exIndex = String(idx + 1).padStart(2, '0');
-                                  
-                                  return (
-                                    <li
-                                      key={idx}
-                                      className="flex items-center gap-3 rounded-xl bg-white/[0.03] p-2 border border-white/[0.02]"
-                                    >
-                                      <span
-                                        className={`flex size-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
-                                          idx === 0 ? 'bg-white text-ink' : 'bg-white/5 text-white/40'
-                                        }`}
-                                      >
+                        {/* Cuerpo sin fondos opacos pesados (Fondo transparente integrado) */}
+                        <div className="p-3 border-t border-ink-line">
+                          {exercises.length > 0 ? (
+                            <div className="space-y-1.5 mb-3">
+                              {exercises.slice(0, 3).map((ej, idx) => {
+                                const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                                const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
+                                const exIndex = String(idx + 1).padStart(2, '0');
+
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60"
+                                  >
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      <span className="text-[10px] font-bold text-white/40 w-5">
                                         {exIndex}
                                       </span>
-                                      <div className="min-w-0 flex-1">
-                                        <p className="truncate text-xs font-semibold text-paper">
-                                          {exName}
-                                        </p>
-                                        <p className="text-[10px] text-white/40">{exDetail}</p>
-                                      </div>
-                                      <span className="flex size-7 shrink-0 items-center justify-center rounded-full ring-1 ring-white/10">
-                                        <ChevronRight className="size-3 text-white/50" aria-hidden="true" />
+                                      <span className="text-xs font-semibold text-paper truncate">
+                                        {exName}
                                       </span>
-                                    </li>
-                                  );
-                                })}
-                              </ul>
-                            ) : (
-                              <p className="text-[11px] text-white/40 py-1">Sin ejercicios</p>
-                            )}
-                          </div>
+                                    </div>
+                                    <span className="text-[10px] text-white/40 shrink-0">
+                                      {exDetail}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              {exercises.length > 3 && (
+                                <p className="text-[10px] text-center text-white/40 pt-1">
+                                  + {exercises.length - 3} ejercicios adicionales
+                                </p>
+                              )}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-white/30 italic py-2 text-center">
+                              Sin ejercicios asignados.
+                            </p>
+                          )}
 
-                          {/* Botón Píldora (Empezar) */}
-                          <button
+                          {/* Botón de Inicio con Estilo iOS Unificado */}
+                          <motion.button
+                            whileTap={{ scale: 0.98 }}
                             type="button"
                             onClick={() => setLocation(`/routine/${rutina.id}`)}
-                            className="flex w-full items-center justify-between rounded-full bg-lime py-1.5 pl-4 pr-1.5 text-ink transition-transform active:scale-[0.98] cursor-pointer"
+                            className="touch-press w-full flex items-center justify-between rounded-xl bg-paper py-2.5 pl-4 pr-2 text-ink font-black text-xs uppercase tracking-wider shadow-sm hover:bg-white/90 cursor-pointer"
                           >
-                            <span className="text-[11px] font-bold uppercase tracking-wide">
-                              Empezar
-                            </span>
-                            <span className="flex size-7 items-center justify-center rounded-full bg-ink">
-                              <Play className="size-3 fill-lime text-lime" aria-hidden="true" />
-                            </span>
-                          </button>
+                            <span>Comenzar rutina</span>
+                            <div className="w-6 h-6 rounded-lg bg-ink text-paper flex items-center justify-center">
+                              <Play size={11} className="fill-paper ml-0.5" />
+                            </div>
+                          </motion.button>
                         </div>
-                      </div>
+                      </motion.div>
                     );
                   })
                 )}
               </motion.div>
             </AnimatePresence>
 
-            {/* Controles de Paginación */}
+            {/* ================= PAGINACIÓN LIMPIA ================= */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-3 px-1 py-2 text-xs text-white/50 border-t border-ink-line">
-                <span>Página {currentPage} de {totalPages}</span>
-                <div className="flex gap-1.5">
-                  <button
+              <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/50">
+                <span className="text-[11px]">
+                  Página <strong className="text-paper">{currentPage}</strong> de {totalPages}
+                </span>
+                
+                <div className="flex items-center gap-1.5">
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    type="button"
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={currentPage === 1}
-                    className="p-1.5 rounded-lg bg-ink-soft border border-ink-line text-white/70 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 active:scale-95 transition-all"
+                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.04]"
                   >
-                    <ChevronLeft size={14} />
-                  </button>
-                  <button
+                    <ChevronLeft size={15} strokeWidth={2.5} />
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
+                    type="button"
                     onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="p-1.5 rounded-lg bg-ink-soft border border-ink-line text-white/70 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-white/10 active:scale-95 transition-all"
+                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.04]"
                   >
-                    <ChevronRight size={14} />
-                  </button>
+                    <ChevronRight size={15} strokeWidth={2.5} />
+                  </motion.button>
                 </div>
               </div>
             )}
           </section>
 
         </main>
-
       </div>
     </AnimatedPage>
   );

@@ -1,23 +1,25 @@
 import { motion } from "framer-motion";
 
-// Transición ligera y rápida (Tween)
-const lightTransition = {
+// Transición iOS: deslizamiento sutil desde la derecha + fade
+const pageTransition = {
   type: "tween",
-  duration: 0.15,
-  ease: "easeInOut",
+  duration: 0.22,
+  ease: [0.4, 0.0, 0.2, 1], // curva estándar iOS
 };
 
-// Variantes limpias basadas únicamente en opacidad para evitar saltos visuales o scroll horizontal
 const pageVariants = {
-  initial: { 
-    opacity: 0 
+  initial: {
+    opacity: 0,
+    x: 20, // desplazamiento horizontal mínimo
   },
-  animate: { 
-    opacity: 1 
+  animate: {
+    opacity: 1,
+    x: 0,
   },
-  exit: { 
-    opacity: 0 
-  }
+  exit: {
+    opacity: 0,
+    x: -10,
+  },
 };
 
 export default function AnimatedPage({ children, className = "" }) {
@@ -27,7 +29,7 @@ export default function AnimatedPage({ children, className = "" }) {
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={lightTransition}
+      transition={pageTransition}
       className={`flex flex-col flex-1 w-full h-full ${className}`}
     >
       {children}
