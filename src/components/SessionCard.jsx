@@ -12,6 +12,9 @@ const exercises = [
 export default function SessionCard() {
   const [, setLocation] = useLocation();
 
+  // Mostrar solo el primer ejercicio
+  const visibleExercises = exercises.slice(0, 1);
+
   return (
     <section
       aria-labelledby="session-title"
@@ -63,16 +66,18 @@ export default function SessionCard() {
         </span>
       </button>
 
-      {/* Lista de ejercicios */}
+      {/* Lista de ejercicios (solo 1 visible) */}
       <div className="mt-5">
         <div className="mb-3 flex items-center justify-between">
           <h3 className="text-xs font-semibold uppercase tracking-widest text-white/40">
             Ronda 1
           </h3>
-          <span className="text-xs font-medium text-white/40">4 ejercicios</span>
+          <span className="text-xs font-medium text-white/40">
+            {visibleExercises.length} ejercicio{visibleExercises.length !== 1 && 's'}
+          </span>
         </div>
         <ul className="flex flex-col gap-1.5">
-          {exercises.map((ex, i) => (
+          {visibleExercises.map((ex, i) => (
             <li
               key={ex.index}
               className="flex items-center gap-3 rounded-2xl bg-white/[0.03] p-2.5 border border-white/[0.02]"

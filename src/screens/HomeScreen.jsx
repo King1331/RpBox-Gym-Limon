@@ -35,9 +35,9 @@ export default function HomeScreen() {
       {/* Contenido Principal (Tarjetas) */}
       {/* El pb-28 asegura que el contenido no quede tapado por el menú flotante del AppShell */}
       <main className="flex flex-col gap-4 px-5 pb-28 pt-5">
+        <MembershipCard />
         <SessionCard />
         <Scoreboard />
-        <MembershipCard />
       </main>
 
     </div>
