@@ -5,13 +5,11 @@ import {
   Dumbbell,
   Plus,
   Play,
-  Sparkles,
   ChevronLeft,
   ChevronRight,
   Flame,
   Layers,
   ArrowRight,
-  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "../components/HeroSection";
@@ -19,9 +17,9 @@ import AnimatedPage from "../components/AnimatedPage";
 import { rutinasMock } from "../lib/rutinasMock";
 
 const DEFAULT_IMAGES = [
-  "images/rutinapierna.jpg",
-  "images/pecho-supremo.jpg",
-  "images/pierna-hipertrofia.jpg"
+  "/images/rutinapierna.jpg",
+  "/images/pecho-supremo.jpg",
+  "/images/pierna-hipertrofia.jpg"
 ];
 
 // Variantes de animación escalonada estilo iOS
@@ -49,15 +47,14 @@ export default function RoutineSelector() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState("coach");
   const [currentPage, setCurrentPage] = useState(1);
-  const [expandedRoutineId, setExpandedRoutineId] = useState(null);
-  const ITEMS_PER_PAGE = 2;
+  const ITEMS_PER_PAGE = 1; // Una tarjeta por página
 
   // Rutina en curso
   const rawRutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
   const rutinaEnCurso = useMemo(() => {
     if (!rawRutinaEnCurso) return null;
     return rawRutinaEnCurso.titulo === "Pierna y pantorilla"
-      ? { ...rawRutinaEnCurso, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" }
+      ? { ...rawRutinaEnCurso, titulo: "Rutina de pecho Suprema", imagen: "/images/pecho-supremo.jpg" }
       : rawRutinaEnCurso;
   }, [rawRutinaEnCurso]);
 
@@ -65,12 +62,31 @@ export default function RoutineSelector() {
   const totalMios = useMemo(() => rutinasMock.filter((r) => r.origen === "mio" && r.visible).length, []);
 
   const lista = useMemo(() => {
-    return rutinasMock
+    const filtered = rutinasMock
       .filter((r) => r.origen === tab && r.visible)
-      .map(r => r.titulo === "Pierna y pantorilla"
-        ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" }
-        : r
-      );
+      .map(r => {
+        // Normalizar título para comparación
+        const tituloNormalizado = r.titulo.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+        if (tituloNormalizado === "pierna y pantorilla") {
+          return { ...r, titulo: "Rutina de pecho Suprema", imagen: "/images/pecho-supremo.jpg" };
+        }
+        if (tituloNormalizado === "empuje premium") {
+          return { ...r, imagen: "/images/pecho-supremo.jpg" };
+        }
+        if (tituloNormalizado === "mañanas express" || tituloNormalizado === "mananas express") {
+          return { ...r, imagen: "/images/atleta2.jpg" };
+        }
+        return r;
+      });
+
+    // Ordenar: primero "Empuje Premium", luego "Pierna hipertrofia", después el resto
+    return filtered.sort((a, b) => {
+      const order = { "Empuje Premium": 0, "Pierna hipertrofia": 1 };
+      const aOrder = order[a.titulo] ?? 2;
+      const bOrder = order[b.titulo] ?? 2;
+      return aOrder - bOrder;
+    });
   }, [tab]);
 
   const totalPages = Math.ceil(lista.length / ITEMS_PER_PAGE);
@@ -81,11 +97,6 @@ export default function RoutineSelector() {
   const handleTabChange = (newTab) => {
     setTab(newTab);
     setCurrentPage(1);
-    setExpandedRoutineId(null);
-  };
-
-  const toggleExpand = (id) => {
-    setExpandedRoutineId(prev => (prev === id ? null : id));
   };
 
   return (
@@ -252,7 +263,7 @@ export default function RoutineSelector() {
               </motion.button>
             )}
 
-            {/* ================= LISTA DE RUTINAS CON ACORDEÓN ================= */}
+            {/* ================= LISTA DE RUTINAS SIN ACORDEÓN ================= */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${tab}-${currentPage}`}
@@ -278,7 +289,6 @@ export default function RoutineSelector() {
                   paginatedLista.map((rutina, index) => {
                     const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
                     const exercises = rutina.ejercicios || [];
-                    const isExpanded = expandedRoutineId === rutina.id;
 
                     return (
                       <motion.div 
@@ -319,75 +329,40 @@ export default function RoutineSelector() {
                           </div>
                         </div>
 
-                        {/* Cuerpo con acordeón para ejercicios */}
+                        {/* Cuerpo con todos los ejercicios visibles */}
                         <div className="p-3 border-t border-ink-line">
-                          {/* Botón para expandir/colapsar */}
-                          <button
-                            type="button"
-                            onClick={() => toggleExpand(rutina.id)}
-                            className="w-full flex items-center justify-between py-2 text-xs font-semibold text-paper/80 hover:text-paper transition-colors"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <Dumbbell size={14} className="text-white/50" />
-                              {exercises.length > 0 
-                                ? `${exercises.length} ejercicios` 
-                                : "Sin ejercicios"}
-                            </span>
-                            <motion.span
-                              animate={{ rotate: isExpanded ? 180 : 0 }}
-                              transition={{ duration: 0.2 }}
-                              className="text-white/50"
-                            >
-                              <ChevronDown size={16} />
-                            </motion.span>
-                          </button>
+                          {exercises.length > 0 ? (
+                            <div className="space-y-1.5 mb-3">
+                              {exercises.map((ej, idx) => {
+                                const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                                const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
+                                const exIndex = String(idx + 1).padStart(2, '0');
 
-                          {/* Contenido desplegable */}
-                          <AnimatePresence initial={false}>
-                            {isExpanded && (
-                              <motion.div
-                                key="content"
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
-                                className="overflow-hidden"
-                              >
-                                {exercises.length > 0 ? (
-                                  <div className="space-y-1.5 pt-2 pb-1">
-                                    {exercises.map((ej, idx) => {
-                                      const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
-                                      const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
-                                      const exIndex = String(idx + 1).padStart(2, '0');
-
-                                      return (
-                                        <div
-                                          key={idx}
-                                          className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60"
-                                        >
-                                          <div className="flex items-center gap-2.5 min-w-0">
-                                            <span className="text-[10px] font-bold text-white/40 w-5">
-                                              {exIndex}
-                                            </span>
-                                            <span className="text-xs font-semibold text-paper truncate">
-                                              {exName}
-                                            </span>
-                                          </div>
-                                          <span className="text-[10px] text-white/40 shrink-0">
-                                            {exDetail}
-                                          </span>
-                                        </div>
-                                      );
-                                    })}
+                                return (
+                                  <div
+                                    key={idx}
+                                    className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60"
+                                  >
+                                    <div className="flex items-center gap-2.5 min-w-0">
+                                      <span className="text-[10px] font-bold text-white/40 w-5">
+                                        {exIndex}
+                                      </span>
+                                      <span className="text-xs font-semibold text-paper truncate">
+                                        {exName}
+                                      </span>
+                                    </div>
+                                    <span className="text-[10px] text-white/40 shrink-0">
+                                      {exDetail}
+                                    </span>
                                   </div>
-                                ) : (
-                                  <p className="text-xs text-white/30 italic py-2 text-center">
-                                    Sin ejercicios asignados.
-                                  </p>
-                                )}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-xs text-white/30 italic py-2 text-center">
+                              Sin ejercicios asignados.
+                            </p>
+                          )}
 
                           {/* Botón de Inicio con Estilo iOS Unificado */}
                           <motion.button
