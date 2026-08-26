@@ -18,10 +18,10 @@ export default function RoutineScreen() {
         <button 
           type="button"
           onClick={() => window.history.back()}
-          className="flex items-center gap-1.5 text-white/50 font-mono text-[11px] tracking-widest uppercase mb-4 hover:text-paper transition-colors cursor-pointer w-fit"
+          className="flex items-center gap-1.5 text-white/60 hover:text-paper active:scale-95 transition-all mb-4 text-xs font-semibold uppercase tracking-widest"
         >
           <ChevronLeft size={16} />
-          Volver atrás
+          Volver
         </button>
 
         <span className="text-[11px] font-semibold uppercase tracking-widest text-white">

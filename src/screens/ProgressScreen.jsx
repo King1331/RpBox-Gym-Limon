@@ -22,15 +22,17 @@ export default function ProgressScreen() {
         <button 
           type="button"
           onClick={() => window.history.back()}
-          className="flex items-center gap-1.5 text-white/50 font-mono text-[11px] tracking-widest uppercase mb-4 hover:text-paper transition-colors cursor-pointer w-fit"
+          className="flex items-center gap-1.5 text-white/60 hover:text-paper active:scale-95 transition-all mb-4 text-xs font-semibold uppercase tracking-widest"
         >
           <ChevronLeft size={16} />
-          Volver atrás
+          Volver
         </button>
 
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-white">
-          Datos de rendimiento
-        </p>
+         <div className="flex items-center gap-1.5 mb-2">
+            <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 text-[10px] font-bold tracking-widest uppercase">
+              Datos de rendimiento
+            </span>
+          </div>
         <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
           Progreso.
         </h1>

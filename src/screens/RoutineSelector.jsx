@@ -75,12 +75,29 @@ export default function RoutineSelector() {
     setCurrentPage(1);
   };
 
+  const handleGoBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      setLocation("/");
+    }
+  };
+
   return (
     <AnimatedPage>
       <div className="flex flex-col bg-ink text-paper min-h-screen font-sans">
         
         {/* ================= HERO SECTION ================= */}
         <HeroSection>
+          <button
+            type="button"
+            onClick={handleGoBack}
+            className="flex items-center gap-1.5 text-white/60 hover:text-paper active:scale-95 transition-all mb-4 text-xs font-semibold uppercase tracking-widest"
+          >
+            <ChevronLeft size={16} />
+            Volver
+          </button>
+
           <div className="flex items-center gap-1.5 mb-2">
             <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 text-[10px] font-bold tracking-widest uppercase">
               Programación
@@ -314,7 +331,7 @@ export default function RoutineSelector() {
                         {/* Botón Comenzar con respuesta CSS instantánea */}
                         <button
                           type="button"
-                          onClick={() => setLocation(`/routine/${rutina.id}`)}
+                          onClick={() => setLocation("/routine")}
                           className="w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform duration-100 cursor-pointer font-display"
                         >
                           <span>Comenzar rutina</span>
