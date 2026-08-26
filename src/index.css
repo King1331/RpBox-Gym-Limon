@@ -537,63 +537,66 @@
 }
 
 
-/* ========== MICRO-INTERACCIONES iOS-LIKE ========== */
+/* ========== MICRO-INTERACCIONES iOS-LIKE (120Hz OPTIMIZADAS) ========== */
 
-/* Elimina el resaltado táctil molesto en móviles */
+/* Elimina el resaltado gris y acelera el tiempo de respuesta al toque */
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Clase para botones/tarjetas con efecto de presión */
-.pressable {
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+/* Respuesta táctil elástica nativa de iOS (Sin saturar memoria GPU) */
+.pressable,
+.touch-press {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: transform 0.1s cubic-bezier(0.32, 0.72, 0, 1),
+              opacity 0.1s ease-out;
 }
 
-.pressable:active {
+.pressable:active,
+.touch-press:active {
   transform: scale(0.97);
-  opacity: 0.9;
+  opacity: 0.88;
 }
 
-/* Animación de entrada para elementos (usar con .animate-fade-slide) */
+/* Animación de entrada fluida mediante translate3d sin recálculo de diseño */
 @keyframes fadeSlideUp {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translate3d(0, 10px, 0);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
 .animate-fade-slide {
-  animation: fadeSlideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) both;
-  will-change: opacity, transform;
+  animation: fadeSlideUp 0.22s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Animación de escala para checkmarks (pop) */
+/* Micro-pop elástico acelerado por hardware para checks y badges */
 @keyframes popIn {
   0% {
     opacity: 0;
-    transform: scale(0.5);
+    transform: scale3d(0.6, 0.6, 1);
   }
   70% {
-    transform: scale(1.15);
+    transform: scale3d(1.1, 1.1, 1);
   }
   100% {
     opacity: 1;
-    transform: scale(1);
+    transform: scale3d(1, 1, 1);
   }
 }
 
 .animate-pop {
-  animation: popIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) both;
-  will-change: transform, opacity;
+  animation: popIn 0.2s cubic-bezier(0.32, 0.72, 0, 1) both;
 }
 
-/* Reducción de movimiento para preferencias del sistema */
+/* Reducción de movimiento accesible */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

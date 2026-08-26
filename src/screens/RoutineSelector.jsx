@@ -22,44 +22,21 @@ const DEFAULT_IMAGES = [
   "/images/pierna-hipertrofia.jpg"
 ];
 
-// 1. Curva elástica oficial de iOS (Spring Physics sin JS pesado)
-const IOS_SPRING = [0.32, 0.72, 0, 1];
-
-// 4 & 5. Variantes de lista: Entrada escalonada (Stagger) + Desplazamiento horizontal (Slide & Fade)
-const listContainerVariants = {
-  hidden: { opacity: 0, x: 18 },
+// Transición limpia de contenedor (100% GPU / Cero cálculo en hijos)
+const pageSlideVariants = {
+  hidden: { opacity: 0, x: 20 },
   show: {
     opacity: 1,
     x: 0,
     transition: {
-      duration: 0.22,
-      ease: IOS_SPRING,
-      staggerChildren: 0.08,
+      duration: 0.18,
+      ease: [0.32, 0.72, 0, 1],
     },
   },
   exit: { 
     opacity: 0, 
-    x: -18, 
-    transition: { duration: 0.16, ease: IOS_SPRING } 
-  },
-};
-
-const cardItemVariants = {
-  hidden: { opacity: 0, y: 14, scale: 0.98 },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.25, ease: IOS_SPRING },
-  },
-};
-
-const exerciseItemVariants = {
-  hidden: { opacity: 0, x: -8 },
-  show: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: 0.2, ease: IOS_SPRING },
+    x: -20, 
+    transition: { duration: 0.14, ease: [0.32, 0.72, 0, 1] } 
   },
 };
 
@@ -67,7 +44,7 @@ export default function RoutineSelector() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState("coach");
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 1; // Una tarjeta por página
+  const ITEMS_PER_PAGE = 1;
 
   // Rutina en curso
   const rawRutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
@@ -142,14 +119,9 @@ export default function RoutineSelector() {
         {/* ================= MAIN CONTENT ================= */}
         <main className="flex flex-col gap-5 px-4 pb-36 pt-2">
           
-          {/* ================= SECCIÓN: RUTINA EN CURSO (HAPTIC TOUCH + GPU TRANSLATE) ================= */}
+          {/* ================= SECCIÓN: RUTINA EN CURSO (100% CSS TOUCH) ================= */}
           {rutinaEnCurso && (
-            <motion.section 
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.25, ease: IOS_SPRING }}
-              className="space-y-2"
-            >
+            <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
                   <span className="flex items-center justify-center w-5 h-5">
@@ -159,27 +131,25 @@ export default function RoutineSelector() {
                 </p>
               </div>
 
-              {/* 2. Micro-rebote táctil al presionar la tarjeta */}
-              <motion.div 
-                whileTap={{ scale: 0.98 }}
+              {/* Tap ultra reactivo con CSS nativo */}
+              <div 
                 onClick={() => setLocation("/routine")}
-                style={{ willChange: "transform", transform: "translateZ(0)" }}
-                className="touch-press relative rounded-2xl overflow-hidden border border-ink-line group cursor-pointer shadow-sm"
+                className="touch-press relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100 ease-out"
               >
-                {/* Foto destacada con gradiente suave */}
+                {/* Foto con gradiente sin blurs pesados */}
                 <div 
-                  className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                  className="absolute inset-0 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-ink/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" />
 
                 {/* Contenido */}
                 <div className="relative z-10 p-4 flex flex-col justify-between min-h-[160px]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-ink/70 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         Activa hoy
                       </span>
@@ -209,20 +179,19 @@ export default function RoutineSelector() {
                     </span>
                   </div>
                 </div>
-              </motion.div>
-            </motion.section>
+              </div>
+            </section>
           )}
 
           {/* ================= SECCIÓN: EXPLORADOR DE RUTINAS ================= */}
           <section className="space-y-3">
             
-            {/* 3. Control Segmentado con Cápsula Deslizante (layoutId) */}
+            {/* Control Segmentado con Cápsula Deslizante Optimizada */}
             <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line relative">
-              <motion.button
-                whileTap={{ scale: 0.96 }}
+              <button
                 type="button"
                 onClick={() => handleTabChange("coach")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 active:scale-95 transition-transform duration-75 ${
                   tab === "coach" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
@@ -230,17 +199,16 @@ export default function RoutineSelector() {
                   <motion.div
                     layoutId="activeRoutineTab"
                     className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
-                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
                   />
                 )}
                 Coach <span className={`text-[10px] ${tab === "coach" ? "text-ink/70 font-bold" : "text-white/30"}`}>({totalCoach})</span>
-              </motion.button>
+              </button>
 
-              <motion.button
-                whileTap={{ scale: 0.96 }}
+              <button
                 type="button"
                 onClick={() => handleTabChange("mio")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 ${
+                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 active:scale-95 transition-transform duration-75 ${
                   tab === "mio" ? "text-ink" : "text-white/40 hover:text-paper"
                 }`}
               >
@@ -248,64 +216,52 @@ export default function RoutineSelector() {
                   <motion.div
                     layoutId="activeRoutineTab"
                     className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
-                    transition={{ type: "spring", stiffness: 450, damping: 35 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
                   />
                 )}
                 Mis Rutinas <span className={`text-[10px] ${tab === "mio" ? "text-ink/70 font-bold" : "text-white/30"}`}>({totalMios})</span>
-              </motion.button>
+              </button>
             </div>
 
-            {/* ================= BOTÓN CREAR RUTINA (MICRO-HAPTIC FEEDBACK) ================= */}
-            <AnimatePresence>
-              {tab === "mio" && (
-                <motion.button
-                  initial={{ opacity: 0, y: -8, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -8, scale: 0.97 }}
-                  transition={{ duration: 0.2, ease: IOS_SPRING }}
-                  whileTap={{ scale: 0.97 }}
-                  type="button"
-                  onClick={() => setLocation("/crear-rutina")}
-                  style={{ willChange: "transform", transform: "translateZ(0)" }}
-                  className="touch-press w-full p-3.5 rounded-2xl bg-ink-soft border border-ink-line hover:border-white/30 flex items-center justify-between group transition-all shadow-sm text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-xl bg-paper text-ink flex items-center justify-center shrink-0 shadow-sm">
-                      <Plus size={20} strokeWidth={2.5} />
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-paper font-display">
-                        Crear nueva rutina
-                      </h4>
-                      <p className="text-[11px] text-white/50 mt-0.5">
-                        Configura días, grupos musculares y ejercicios.
-                      </p>
-                    </div>
+            {/* ================= BOTÓN CREAR RUTINA ================= */}
+            {tab === "mio" && (
+              <button
+                type="button"
+                onClick={() => setLocation("/crear-rutina")}
+                className="touch-press w-full p-3.5 rounded-2xl bg-ink-soft border border-ink-line hover:border-white/30 flex items-center justify-between group shadow-sm text-left active:scale-[0.98] transition-transform duration-100"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-paper text-ink flex items-center justify-center shrink-0 shadow-sm">
+                    <Plus size={20} strokeWidth={2.5} />
                   </div>
-
-                  <div className="w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/40 group-hover:text-paper group-hover:bg-white/10 transition-colors shrink-0">
-                    <ChevronRight size={15} strokeWidth={2.5} />
+                  <div>
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-paper font-display">
+                      Crear nueva rutina
+                    </h4>
+                    <p className="text-[11px] text-white/50 mt-0.5">
+                      Configura días, grupos musculares y ejercicios.
+                    </p>
                   </div>
-                </motion.button>
-              )}
-            </AnimatePresence>
+                </div>
 
-            {/* ================= LISTA DE RUTINAS (SLIDE & FADE + STAGGERED ENTRANCE) ================= */}
+                <div className="w-7 h-7 rounded-full bg-white/[0.04] border border-white/[0.08] flex items-center justify-center text-white/40 group-hover:text-paper transition-colors shrink-0">
+                  <ChevronRight size={15} strokeWidth={2.5} />
+                </div>
+              </button>
+            )}
+
+            {/* ================= LISTA DE RUTINAS (PURA FLUIDEZ EN PROMOTION 120Hz) ================= */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${tab}-${currentPage}`}
-                variants={listContainerVariants}
+                variants={pageSlideVariants}
                 initial="hidden"
                 animate="show"
                 exit="exit"
-                style={{ willChange: "transform", transform: "translateZ(0)" }}
                 className="space-y-3"
               >
                 {lista.length === 0 ? (
-                  <motion.div 
-                    variants={cardItemVariants}
-                    className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-10 px-4 text-center"
-                  >
+                  <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-10 px-4 text-center">
                     <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
                       <Layers size={22} />
                     </div>
@@ -315,18 +271,16 @@ export default function RoutineSelector() {
                         ? "Empieza creando tu primer plan personalizado con el botón superior."
                         : "Tu coach aún no ha compartido rutinas contigo."}
                     </p>
-                  </motion.div>
+                  </div>
                 ) : (
                   paginatedLista.map((rutina, index) => {
                     const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
                     const exercises = rutina.ejercicios || [];
 
                     return (
-                      <motion.div 
+                      <div 
                         key={rutina.id} 
-                        variants={cardItemVariants}
-                        style={{ willChange: "transform", transform: "translateZ(0)" }}
-                        className="border border-ink-line rounded-2xl overflow-hidden transition-all shadow-sm"
+                        className="border border-ink-line rounded-2xl overflow-hidden shadow-sm"
                       >
                         {/* Cabecera con Foto */}
                         <div 
@@ -335,11 +289,11 @@ export default function RoutineSelector() {
                             backgroundImage: `url(${bgImage})`
                           }}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-t from-ink/50 via-ink/20 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent" />
 
                           <div className="relative z-10 flex items-start justify-between gap-2">
                             <div>
-                              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/60 backdrop-blur-sm border border-white/10">
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/80 border border-white/10">
                                 {rutina.origen === "coach" ? "Coach" : "Personal"}
                               </span>
                               <h3 className="text-base font-semibold text-paper mt-1.5 font-display">
@@ -347,7 +301,7 @@ export default function RoutineSelector() {
                               </h3>
                             </div>
 
-                            <div className="flex items-center gap-1.5 bg-ink/70 backdrop-blur-sm px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
+                            <div className="flex items-center gap-1.5 bg-ink/80 px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
                               <Clock size={12} className="text-white/60" />
                               <span>{rutina.duracion} min</span>
                             </div>
@@ -360,7 +314,7 @@ export default function RoutineSelector() {
                           </div>
                         </div>
 
-                        {/* Cuerpo con ejercicios animados en micro-cascada */}
+                        {/* Cuerpo con renderizado directo (cero JS loops) */}
                         <div className="p-3 border-t border-ink-line">
                           {exercises.length > 0 ? (
                             <div className="space-y-1.5 mb-3">
@@ -370,9 +324,8 @@ export default function RoutineSelector() {
                                 const exIndex = String(idx + 1).padStart(2, '0');
 
                                 return (
-                                  <motion.div
+                                  <div
                                     key={idx}
-                                    variants={exerciseItemVariants}
                                     className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60 bg-ink/30"
                                   >
                                     <div className="flex items-center gap-2.5 min-w-0">
@@ -386,7 +339,7 @@ export default function RoutineSelector() {
                                     <span className="text-[10px] text-white/40 shrink-0 font-medium">
                                       {exDetail}
                                     </span>
-                                  </motion.div>
+                                  </div>
                                 );
                               })}
                             </div>
@@ -396,27 +349,26 @@ export default function RoutineSelector() {
                             </p>
                           )}
 
-                          {/* Botón de Inicio con Micro-rebote Háptico */}
-                          <motion.button
-                            whileTap={{ scale: 0.97 }}
+                          {/* Botón de Inicio con respuesta táctil instantánea */}
+                          <button
                             type="button"
                             onClick={() => setLocation(`/routine/${rutina.id}`)}
-                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm hover:brightness-105 cursor-pointer font-display"
+                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform duration-100 cursor-pointer font-display"
                           >
                             <span>Comenzar rutina</span>
                             <div className="w-6 h-6 rounded-lg bg-ink text-lime flex items-center justify-center">
                               <Play size={11} className="fill-lime ml-0.5" />
                             </div>
-                          </motion.button>
+                          </button>
                         </div>
-                      </motion.div>
+                      </div>
                     );
                   })
                 )}
               </motion.div>
             </AnimatePresence>
 
-            {/* ================= PAGINACIÓN LIMPIA CON FEEDBACK HÁPTICO ================= */}
+            {/* ================= PAGINACIÓN ================= */}
             {totalPages > 1 && (
               <div className="flex items-center justify-between pt-2 px-1 text-xs text-white/50">
                 <span className="text-[11px]">
@@ -424,24 +376,22 @@ export default function RoutineSelector() {
                 </span>
                 
                 <div className="flex items-center gap-1.5">
-                  <motion.button
-                    whileTap={{ scale: 0.90 }}
+                  <button
                     type="button"
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={currentPage === 1}
-                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.04]"
+                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
                   >
                     <ChevronLeft size={15} strokeWidth={2.5} />
-                  </motion.button>
-                  <motion.button
-                    whileTap={{ scale: 0.90 }}
+                  </button>
+                  <button
                     type="button"
                     onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/[0.04]"
+                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
                   >
                     <ChevronRight size={15} strokeWidth={2.5} />
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             )}
