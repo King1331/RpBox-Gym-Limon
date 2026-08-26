@@ -44,7 +44,7 @@ export default function PaymentCard({
         {/* Botón de rechazar con diseño y tono rojito (flame) */}
         <motion.button
           whileTap={{ scale: 0.95 }}
-          className="secondary-btn text-flame bg-flame/10 border border-flame/70 hover:bg-flame/20"
+          className="secondary-btn text-flame  border-flame/70"
           onClick={() => onReject('Pago rechazado')}
           data-testid="button-reject-payment"
         >

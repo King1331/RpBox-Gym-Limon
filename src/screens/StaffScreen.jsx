@@ -71,7 +71,7 @@ export default function StaffScreen() {
               className="glass-card empty-state flex flex-col items-center justify-center text-center p-8 mt-2" 
               data-testid="empty-payments"
             >
-              <div className="w-14 h-14 rounded-full bg-flame/10 flex items-center justify-center mb-3 text-flame">
+              <div className="w-14 h-14 rounded-full bg-ink/10 flex items-center justify-center mb-3 text-white">
                 <ShieldCheck size={28} />
               </div>
               <h3>Todo al día</h3>
