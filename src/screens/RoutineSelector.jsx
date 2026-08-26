@@ -11,7 +11,6 @@ import {
   Layers,
   ArrowRight,
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "../components/HeroSection";
 import AnimatedPage from "../components/AnimatedPage";
 import { rutinasMock } from "../lib/rutinasMock";
@@ -21,24 +20,6 @@ const DEFAULT_IMAGES = [
   "/images/pecho-supremo.jpg",
   "/images/pierna-hipertrofia.jpg"
 ];
-
-// Transición limpia de contenedor (100% GPU / Cero cálculo en hijos)
-const pageSlideVariants = {
-  hidden: { opacity: 0, x: 20 },
-  show: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.18,
-      ease: [0.32, 0.72, 0, 1],
-    },
-  },
-  exit: { 
-    opacity: 0, 
-    x: -20, 
-    transition: { duration: 0.14, ease: [0.32, 0.72, 0, 1] } 
-  },
-};
 
 export default function RoutineSelector() {
   const [, setLocation] = useLocation();
@@ -119,37 +100,36 @@ export default function RoutineSelector() {
         {/* ================= MAIN CONTENT ================= */}
         <main className="flex flex-col gap-5 px-4 pb-36 pt-2">
           
-          {/* ================= SECCIÓN: RUTINA EN CURSO (100% CSS TOUCH) ================= */}
+          {/* ================= SECCIÓN: RUTINA EN CURSO ================= */}
           {rutinaEnCurso && (
             <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
                   <span className="flex items-center justify-center w-5 h-5">
-                    <Flame size={16} className="text-flame animate-pulse" />
+                    <Flame size={16} className="text-flame" />
                   </span>
                   Sesión en progreso
                 </p>
               </div>
 
-              {/* Tap ultra reactivo con CSS nativo */}
+              {/* Botón táctil con respuesta CSS instantánea (60fps garantizados) */}
               <div 
                 onClick={() => setLocation("/routine")}
-                className="touch-press relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100 ease-out"
+                className="relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100 ease-out"
               >
-                {/* Foto con gradiente sin blurs pesados */}
+                {/* Foto destacada */}
                 <div 
                   className="absolute inset-0 bg-cover bg-center"
                   style={{
                     backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/30 to-transparent" />
 
-                {/* Contenido */}
                 <div className="relative z-10 p-4 flex flex-col justify-between min-h-[160px]">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-ink/70 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
+                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
                         Activa hoy
                       </span>
@@ -186,40 +166,30 @@ export default function RoutineSelector() {
           {/* ================= SECCIÓN: EXPLORADOR DE RUTINAS ================= */}
           <section className="space-y-3">
             
-            {/* Control Segmentado con Cápsula Deslizante Optimizada */}
-            <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line relative">
+            {/* Control Segmentado Instantáneo sin recálculo de DOM */}
+            <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line">
               <button
                 type="button"
                 onClick={() => handleTabChange("coach")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 active:scale-95 transition-transform duration-75 ${
-                  tab === "coach" ? "text-ink" : "text-white/40 hover:text-paper"
+                className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 active:scale-95 ${
+                  tab === "coach"
+                    ? "bg-lime text-ink font-bold shadow-sm"
+                    : "text-white/40 hover:text-paper"
                 }`}
               >
-                {tab === "coach" && (
-                  <motion.div
-                    layoutId="activeRoutineTab"
-                    className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
-                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                  />
-                )}
-                Coach <span className={`text-[10px] ${tab === "coach" ? "text-ink/70 font-bold" : "text-white/30"}`}>({totalCoach})</span>
+                Coach <span className={`text-[10px] ${tab === "coach" ? "text-ink/70" : "text-white/30"}`}>({totalCoach})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => handleTabChange("mio")}
-                className={`touch-press relative z-10 flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors flex items-center justify-center gap-1.5 active:scale-95 transition-transform duration-75 ${
-                  tab === "mio" ? "text-ink" : "text-white/40 hover:text-paper"
+                className={`flex-1 py-2 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all duration-150 flex items-center justify-center gap-1.5 active:scale-95 ${
+                  tab === "mio"
+                    ? "bg-lime text-ink font-bold shadow-sm"
+                    : "text-white/40 hover:text-paper"
                 }`}
               >
-                {tab === "mio" && (
-                  <motion.div
-                    layoutId="activeRoutineTab"
-                    className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
-                    transition={{ type: "spring", stiffness: 500, damping: 38 }}
-                  />
-                )}
-                Mis Rutinas <span className={`text-[10px] ${tab === "mio" ? "text-ink/70 font-bold" : "text-white/30"}`}>({totalMios})</span>
+                Mis Rutinas <span className={`text-[10px] ${tab === "mio" ? "text-ink/70" : "text-white/30"}`}>({totalMios})</span>
               </button>
             </div>
 
@@ -228,7 +198,7 @@ export default function RoutineSelector() {
               <button
                 type="button"
                 onClick={() => setLocation("/crear-rutina")}
-                className="touch-press w-full p-3.5 rounded-2xl bg-ink-soft border border-ink-line hover:border-white/30 flex items-center justify-between group shadow-sm text-left active:scale-[0.98] transition-transform duration-100"
+                className="w-full p-3.5 rounded-2xl bg-ink-soft border border-ink-line hover:border-white/30 flex items-center justify-between group shadow-sm text-left active:scale-[0.98] transition-transform duration-100"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-paper text-ink flex items-center justify-center shrink-0 shadow-sm">
@@ -250,123 +220,114 @@ export default function RoutineSelector() {
               </button>
             )}
 
-            {/* ================= LISTA DE RUTINAS (PURA FLUIDEZ EN PROMOTION 120Hz) ================= */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`${tab}-${currentPage}`}
-                variants={pageSlideVariants}
-                initial="hidden"
-                animate="show"
-                exit="exit"
-                className="space-y-3"
-              >
-                {lista.length === 0 ? (
-                  <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-10 px-4 text-center">
-                    <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
-                      <Layers size={22} />
-                    </div>
-                    <h4 className="text-sm font-semibold text-paper font-display">No hay rutinas disponibles</h4>
-                    <p className="text-xs text-white/40 mt-1 max-w-[220px]">
-                      {tab === "mio"
-                        ? "Empieza creando tu primer plan personalizado con el botón superior."
-                        : "Tu coach aún no ha compartido rutinas contigo."}
-                    </p>
+            {/* ================= LISTA DE RUTINAS ================= */}
+            <div className="space-y-3">
+              {lista.length === 0 ? (
+                <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-10 px-4 text-center">
+                  <div className="w-12 h-12 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
+                    <Layers size={22} />
                   </div>
-                ) : (
-                  paginatedLista.map((rutina, index) => {
-                    const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
-                    const exercises = rutina.ejercicios || [];
+                  <h4 className="text-sm font-semibold text-paper font-display">No hay rutinas disponibles</h4>
+                  <p className="text-xs text-white/40 mt-1 max-w-[220px]">
+                    {tab === "mio"
+                      ? "Empieza creando tu primer plan personalizado con el botón superior."
+                      : "Tu coach aún no ha compartido rutinas contigo."}
+                  </p>
+                </div>
+              ) : (
+                paginatedLista.map((rutina, index) => {
+                  const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
+                  const exercises = rutina.ejercicios || [];
 
-                    return (
+                  return (
+                    <div 
+                      key={rutina.id} 
+                      className="border border-ink-line rounded-2xl overflow-hidden shadow-sm"
+                    >
+                      {/* Cabecera con Foto */}
                       <div 
-                        key={rutina.id} 
-                        className="border border-ink-line rounded-2xl overflow-hidden shadow-sm"
+                        className="relative p-3.5 bg-cover bg-center min-h-[110px] flex flex-col justify-between"
+                        style={{
+                          backgroundImage: `url(${bgImage})`
+                        }}
                       >
-                        {/* Cabecera con Foto */}
-                        <div 
-                          className="relative p-3.5 bg-cover bg-center min-h-[110px] flex flex-col justify-between"
-                          style={{
-                            backgroundImage: `url(${bgImage})`
-                          }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-ink/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent" />
 
-                          <div className="relative z-10 flex items-start justify-between gap-2">
-                            <div>
-                              <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/80 border border-white/10">
-                                {rutina.origen === "coach" ? "Coach" : "Personal"}
-                              </span>
-                              <h3 className="text-base font-semibold text-paper mt-1.5 font-display">
-                                {rutina.titulo}
-                              </h3>
-                            </div>
-
-                            <div className="flex items-center gap-1.5 bg-ink/80 px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
-                              <Clock size={12} className="text-white/60" />
-                              <span>{rutina.duracion} min</span>
-                            </div>
+                        <div className="relative z-10 flex items-start justify-between gap-2">
+                          <div>
+                            <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/80 border border-white/10">
+                              {rutina.origen === "coach" ? "Coach" : "Personal"}
+                            </span>
+                            <h3 className="text-base font-semibold text-paper mt-1.5 font-display">
+                              {rutina.titulo}
+                            </h3>
                           </div>
 
-                          <div className="relative z-10 flex items-center gap-2 mt-2">
-                            <span className="text-[11px] font-medium text-white/70">
-                              {rutina.musculos?.join(" · ") || "Cuerpo completo"}
-                            </span>
+                          <div className="flex items-center gap-1.5 bg-ink/80 px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
+                            <Clock size={12} className="text-white/60" />
+                            <span>{rutina.duracion} min</span>
                           </div>
                         </div>
 
-                        {/* Cuerpo con renderizado directo (cero JS loops) */}
-                        <div className="p-3 border-t border-ink-line">
-                          {exercises.length > 0 ? (
-                            <div className="space-y-1.5 mb-3">
-                              {exercises.map((ej, idx) => {
-                                const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
-                                const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
-                                const exIndex = String(idx + 1).padStart(2, '0');
-
-                                return (
-                                  <div
-                                    key={idx}
-                                    className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60 bg-ink/30"
-                                  >
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                      <span className="text-[10px] font-bold text-white/40 w-5">
-                                        {exIndex}
-                                      </span>
-                                      <span className="text-xs font-semibold text-paper truncate">
-                                        {exName}
-                                      </span>
-                                    </div>
-                                    <span className="text-[10px] text-white/40 shrink-0 font-medium">
-                                      {exDetail}
-                                    </span>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          ) : (
-                            <p className="text-xs text-white/30 italic py-2 text-center">
-                              Sin ejercicios asignados.
-                            </p>
-                          )}
-
-                          {/* Botón de Inicio con respuesta táctil instantánea */}
-                          <button
-                            type="button"
-                            onClick={() => setLocation(`/routine/${rutina.id}`)}
-                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform duration-100 cursor-pointer font-display"
-                          >
-                            <span>Comenzar rutina</span>
-                            <div className="w-6 h-6 rounded-lg bg-ink text-lime flex items-center justify-center">
-                              <Play size={11} className="fill-lime ml-0.5" />
-                            </div>
-                          </button>
+                        <div className="relative z-10 flex items-center gap-2 mt-2">
+                          <span className="text-[11px] font-medium text-white/70">
+                            {rutina.musculos?.join(" · ") || "Cuerpo completo"}
+                          </span>
                         </div>
                       </div>
-                    );
-                  })
-                )}
-              </motion.div>
-            </AnimatePresence>
+
+                      {/* Cuerpo con ejercicios */}
+                      <div className="p-3 border-t border-ink-line">
+                        {exercises.length > 0 ? (
+                          <div className="space-y-1.5 mb-3">
+                            {exercises.map((ej, idx) => {
+                              const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                              const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
+                              const exIndex = String(idx + 1).padStart(2, '0');
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60 bg-ink/30"
+                                >
+                                  <div className="flex items-center gap-2.5 min-w-0">
+                                    <span className="text-[10px] font-bold text-white/40 w-5">
+                                      {exIndex}
+                                    </span>
+                                    <span className="text-xs font-semibold text-paper truncate">
+                                      {exName}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-white/40 shrink-0 font-medium">
+                                    {exDetail}
+                                  </span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p className="text-xs text-white/30 italic py-2 text-center">
+                            Sin ejercicios asignados.
+                          </p>
+                        )}
+
+                        {/* Botón Comenzar con respuesta CSS instantánea */}
+                        <button
+                          type="button"
+                          onClick={() => setLocation(`/routine/${rutina.id}`)}
+                          className="w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform duration-100 cursor-pointer font-display"
+                        >
+                          <span>Comenzar rutina</span>
+                          <div className="w-6 h-6 rounded-lg bg-ink text-lime flex items-center justify-center">
+                            <Play size={11} className="fill-lime ml-0.5" />
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
 
             {/* ================= PAGINACIÓN ================= */}
             {totalPages > 1 && (
@@ -380,7 +341,7 @@ export default function RoutineSelector() {
                     type="button"
                     onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                     disabled={currentPage === 1}
-                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
+                    className="p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
                   >
                     <ChevronLeft size={15} strokeWidth={2.5} />
                   </button>
@@ -388,7 +349,7 @@ export default function RoutineSelector() {
                     type="button"
                     onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="touch-press p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
+                    className="p-2 rounded-xl bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform duration-75"
                   >
                     <ChevronRight size={15} strokeWidth={2.5} />
                   </button>
