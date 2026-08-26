@@ -1,16 +1,18 @@
 import React, { useState, useMemo } from "react";
 import { useLocation } from "wouter";
-import { 
-  Clock, 
-  Dumbbell, 
-  Plus, 
-  Play, 
-  Sparkles, 
-  ChevronLeft, 
+import {
+  Clock,
+  Dumbbell,
+  Plus,
+  Play,
+  Sparkles,
+  ChevronLeft,
   ChevronRight,
   Flame,
   Layers,
-  ArrowRight
+  ArrowRight,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import HeroSection from "../components/HeroSection";
@@ -48,6 +50,7 @@ export default function RoutineSelector() {
   const [, setLocation] = useLocation();
   const [tab, setTab] = useState("coach");
   const [currentPage, setCurrentPage] = useState(1);
+  const [expandedRoutineId, setExpandedRoutineId] = useState(null);
   const ITEMS_PER_PAGE = 2;
 
   // Rutina en curso
@@ -61,12 +64,12 @@ export default function RoutineSelector() {
 
   const totalCoach = useMemo(() => rutinasMock.filter((r) => r.origen === "coach" && r.visible).length, []);
   const totalMios = useMemo(() => rutinasMock.filter((r) => r.origen === "mio" && r.visible).length, []);
-  
+
   const lista = useMemo(() => {
     return rutinasMock
       .filter((r) => r.origen === tab && r.visible)
-      .map(r => r.titulo === "Pierna y pantorilla" 
-        ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" } 
+      .map(r => r.titulo === "Pierna y pantorilla"
+        ? { ...r, titulo: "Rutina de pecho Suprema", imagen: "/pecho-supremo.jpg" }
         : r
       );
   }, [tab]);
@@ -79,6 +82,11 @@ export default function RoutineSelector() {
   const handleTabChange = (newTab) => {
     setTab(newTab);
     setCurrentPage(1);
+    setExpandedRoutineId(null); // Cerrar acordeón al cambiar de pestaña
+  };
+
+  const toggleExpand = (id) => {
+    setExpandedRoutineId(prev => (prev === id ? null : id));
   };
 
   return (
@@ -111,7 +119,9 @@ export default function RoutineSelector() {
             <section className="space-y-2">
               <div className="flex items-center justify-between px-1">
                 <p className="text-[11px] font-bold uppercase tracking-wider text-white/40 flex items-center gap-1.5">
-                  <Flame size={13} className="text-white/60" />
+                  <span className="flex items-center justify-center w-5 h-5 rounded-full border border-flame/60">
+                    <Flame size={13} className="text-flame" />
+                  </span>
                   Sesión en progreso
                 </p>
               </div>
@@ -175,7 +185,7 @@ export default function RoutineSelector() {
           {/* ================= SECCIÓN: EXPLORADOR DE RUTINAS ================= */}
           <section className="space-y-3">
             
-            {/* iOS Segmented Control */}
+            {/* iOS Segmented Control con acento lima */}
             <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line relative">
               <motion.button
                 whileTap={{ scale: 0.97 }}
@@ -188,7 +198,7 @@ export default function RoutineSelector() {
                 {tab === "coach" && (
                   <motion.div
                     layoutId="activeRoutineTab"
-                    className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
+                    className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
                     transition={{ type: "spring", stiffness: 450, damping: 35 }}
                   />
                 )}
@@ -206,7 +216,7 @@ export default function RoutineSelector() {
                 {tab === "mio" && (
                   <motion.div
                     layoutId="activeRoutineTab"
-                    className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
+                    className="absolute inset-0 bg-lime rounded-lg -z-10 shadow-sm"
                     transition={{ type: "spring", stiffness: 450, damping: 35 }}
                   />
                 )}
@@ -245,7 +255,7 @@ export default function RoutineSelector() {
               </motion.button>
             )}
 
-            {/* ================= LISTA DE RUTINAS (FOTO LIMPIA SIN FONDOS PESADOS) ================= */}
+            {/* ================= LISTA DE RUTINAS CON ACORDEÓN ================= */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`${tab}-${currentPage}`}
@@ -271,6 +281,7 @@ export default function RoutineSelector() {
                   paginatedLista.map((rutina, index) => {
                     const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
                     const exercises = rutina.ejercicios || [];
+                    const isExpanded = expandedRoutineId === rutina.id;
 
                     return (
                       <motion.div 
@@ -311,52 +322,82 @@ export default function RoutineSelector() {
                           </div>
                         </div>
 
-                        {/* Cuerpo sin fondos opacos pesados (Fondo transparente integrado) */}
+                        {/* Cuerpo con acordeón para ejercicios */}
                         <div className="p-3 border-t border-ink-line">
-                          {exercises.length > 0 ? (
-                            <div className="space-y-1.5 mb-3">
-                              {exercises.slice(0, 3).map((ej, idx) => {
-                                const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
-                                const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
-                                const exIndex = String(idx + 1).padStart(2, '0');
+                          {/* Botón para expandir/colapsar */}
+                          <button
+                            type="button"
+                            onClick={() => toggleExpand(rutina.id)}
+                            className="w-full flex items-center justify-between py-2 text-xs font-bold text-paper/80 hover:text-paper transition-colors"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <Dumbbell size={14} className="text-white/50" />
+                              {exercises.length > 0 
+                                ? `${exercises.length} ejercicios` 
+                                : "Sin ejercicios"}
+                            </span>
+                            <motion.span
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="text-white/50"
+                            >
+                              <ChevronDown size={16} />
+                            </motion.span>
+                          </button>
 
-                                return (
-                                  <div
-                                    key={idx}
-                                    className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60"
-                                  >
-                                    <div className="flex items-center gap-2.5 min-w-0">
-                                      <span className="text-[10px] font-bold text-white/40 w-5">
-                                        {exIndex}
-                                      </span>
-                                      <span className="text-xs font-semibold text-paper truncate">
-                                        {exName}
-                                      </span>
-                                    </div>
-                                    <span className="text-[10px] text-white/40 shrink-0">
-                                      {exDetail}
-                                    </span>
+                          {/* Contenido desplegable */}
+                          <AnimatePresence initial={false}>
+                            {isExpanded && (
+                              <motion.div
+                                key="content"
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+                                className="overflow-hidden"
+                              >
+                                {exercises.length > 0 ? (
+                                  <div className="space-y-1.5 pt-2 pb-1">
+                                    {exercises.map((ej, idx) => {
+                                      const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                                      const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
+                                      const exIndex = String(idx + 1).padStart(2, '0');
+
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60"
+                                        >
+                                          <div className="flex items-center gap-2.5 min-w-0">
+                                            <span className="text-[10px] font-bold text-white/40 w-5">
+                                              {exIndex}
+                                            </span>
+                                            <span className="text-xs font-semibold text-paper truncate">
+                                              {exName}
+                                            </span>
+                                          </div>
+                                          <span className="text-[10px] text-white/40 shrink-0">
+                                            {exDetail}
+                                          </span>
+                                        </div>
+                                      );
+                                    })}
                                   </div>
-                                );
-                              })}
-                              {exercises.length > 3 && (
-                                <p className="text-[10px] text-center text-white/40 pt-1">
-                                  + {exercises.length - 3} ejercicios adicionales
-                                </p>
-                              )}
-                            </div>
-                          ) : (
-                            <p className="text-xs text-white/30 italic py-2 text-center">
-                              Sin ejercicios asignados.
-                            </p>
-                          )}
+                                ) : (
+                                  <p className="text-xs text-white/30 italic py-2 text-center">
+                                    Sin ejercicios asignados.
+                                  </p>
+                                )}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
 
                           {/* Botón de Inicio con Estilo iOS Unificado */}
                           <motion.button
                             whileTap={{ scale: 0.98 }}
                             type="button"
                             onClick={() => setLocation(`/routine/${rutina.id}`)}
-                            className="touch-press w-full flex items-center justify-between rounded-xl bg-paper py-2.5 pl-4 pr-2 text-ink font-black text-xs uppercase tracking-wider shadow-sm hover:bg-white/90 cursor-pointer"
+                            className="touch-press w-full mt-3 flex items-center justify-between rounded-xl bg-paper py-2.5 pl-4 pr-2 text-ink font-black text-xs uppercase tracking-wider shadow-sm hover:bg-white/90 cursor-pointer"
                           >
                             <span>Comenzar rutina</span>
                             <div className="w-6 h-6 rounded-lg bg-ink text-paper flex items-center justify-center">
