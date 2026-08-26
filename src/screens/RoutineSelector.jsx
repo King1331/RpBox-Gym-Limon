@@ -129,52 +129,85 @@ export default function RoutineSelector() {
                 </p>
               </div>
 
-              {/* Botón táctil con respuesta CSS instantánea (60fps garantizados) */}
-              <div 
-                onClick={() => setLocation("/routine")}
-                className="relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100 ease-out"
-              >
-                {/* Foto destacada */}
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
+              {/* Tarjeta con ejercicios visibles */}
+              <div className="border border-ink-line rounded-2xl overflow-hidden shadow-sm">
+                {/* Cabecera con foto */}
+                <div
+                  className="relative p-3.5 bg-cover bg-center min-h-[110px] flex flex-col justify-between"
                   style={{
-                    backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`
+                    backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})`,
                   }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/75 via-ink/30 to-transparent" />
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/25 to-transparent" />
 
-                <div className="relative z-10 p-4 flex flex-col justify-between min-h-[160px]">
-                  <div className="flex items-start justify-between gap-2">
+                  <div className="relative z-10 flex items-start justify-between gap-2">
                     <div>
-                      <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/10 border border-white/15 text-[10px] font-semibold text-white/90 tracking-wide uppercase mb-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-white/80 px-2 py-0.5 rounded-full bg-ink/80 border border-white/10">
                         Activa hoy
                       </span>
-                      <h3 className="text-xl font-semibold text-paper leading-tight tracking-tight font-display">
+                      <h3 className="text-base font-semibold text-paper mt-1.5 font-display">
                         {rutinaEnCurso?.titulo}
                       </h3>
-                      <p className="text-[11px] text-white/60 mt-0.5">
-                        {rutinaEnCurso?.musculos?.join(" · ") || "Cuerpo completo"}
-                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-1.5 bg-ink/80 px-2 py-1 rounded-lg border border-white/10 text-[11px] text-white/80">
+                      <Clock size={12} className="text-white/60" />
+                      <span>{rutinaEnCurso?.duracion || 0} min</span>
                     </div>
                   </div>
 
-                  <div className="pt-3 flex items-center justify-between border-t border-white/10 mt-3">
-                    <div className="flex items-center gap-3 text-xs text-white/70 font-medium">
-                      <span className="flex items-center gap-1">
-                        <Clock size={12} className="text-white/60" />
-                        {rutinaEnCurso?.duracion || 0} min
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Dumbbell size={12} className="text-white/60" />
-                        {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
-                      </span>
-                    </div>
-
-                    <span className="text-[11px] font-semibold text-paper uppercase tracking-wider flex items-center gap-1">
-                      Continuar <ArrowRight size={13} />
+                  <div className="relative z-10 flex items-center gap-2 mt-2">
+                    <span className="text-[11px] font-medium text-white/70">
+                      {rutinaEnCurso?.musculos?.join(" · ") || "Cuerpo completo"}
                     </span>
                   </div>
+                </div>
+
+                {/* Cuerpo con ejercicios y botón */}
+                <div className="p-3 border-t border-ink-line">
+                  {rutinaEnCurso?.ejercicios?.length > 0 ? (
+                    <div className="space-y-1.5 mb-3">
+                      {rutinaEnCurso.ejercicios.map((ej, idx) => {
+                        const exName = typeof ej === 'string' ? ej : (ej.nombre || 'Ejercicio');
+                        const exDetail = typeof ej === 'string' ? '4 series · 10 reps' : (ej.detalle || '4 series');
+                        const exIndex = String(idx + 1).padStart(2, '0');
+
+                        return (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between px-2.5 py-1.5 rounded-xl border border-ink-line/60 bg-ink/30"
+                          >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <span className="text-[10px] font-bold text-white/40 w-5">
+                                {exIndex}
+                              </span>
+                              <span className="text-xs font-semibold text-paper truncate">
+                                {exName}
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-white/40 shrink-0 font-medium">
+                              {exDetail}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-white/30 italic py-2 text-center">
+                      Sin ejercicios asignados.
+                    </p>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => setLocation("/routine")}
+                    className="w-full mt-3 flex items-center justify-between rounded-xl bg-lime py-2.5 pl-4 pr-2 text-ink font-semibold text-xs uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform duration-100 cursor-pointer font-display"
+                  >
+                    <span>Continuar</span>
+                    <div className="w-6 h-6 rounded-lg bg-ink text-lime flex items-center justify-center">
+                      <Play size={11} className="fill-lime ml-0.5" />
+                    </div>
+                  </button>
                 </div>
               </div>
             </section>
