@@ -1,15 +1,16 @@
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { notifications } from '@/lib/data';
 
 export default function NotificationsModal({ onClose }) {
-  return (
+  return createPortal(
     <div 
-      className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm p-4 sm:p-4 transition-opacity"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity"
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-[440px] mb-20 sm:mb-0 rounded-[2rem] bg-ink-soft border border-ink-line p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
+        className="w-full max-w-[440px] rounded-[2rem] bg-ink-soft border border-ink-line p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200"
         onClick={(event) => event.stopPropagation()}
       >
         {/* Cabecera */}
@@ -63,6 +64,7 @@ export default function NotificationsModal({ onClose }) {
           Marcar como leídas
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
