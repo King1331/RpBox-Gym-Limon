@@ -9,18 +9,20 @@ import {
   Calendar,
   Sparkles,
   Layers,
-  Plus
+  Plus,
+  Flame,
+  X,
+  ArrowRight
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedPage from "@/components/AnimatedPage";
-import HeroSection from "@/components/HeroSection";
 import { ejerciciosPorMusculo } from "@/lib/rutinasMock";
 
 const STEPS = [
-  { id: "info", label: "Nombre", num: 1 },
-  { id: "dias", label: "Frecuencia", num: 2 },
-  { id: "ejercicios", label: "Cargas", num: 3 },
-  { id: "resumen", label: "Resumen", num: 4 },
+  { id: "info", label: "Nombre", num: 1, desc: "Personalización" },
+  { id: "dias", label: "Frecuencia", num: 2, desc: "Días de entreno" },
+  { id: "ejercicios", label: "Ejercicios", num: 3, desc: "Carga muscular" },
+  { id: "resumen", label: "Resumen", num: 4, desc: "Confirmación" },
 ];
 
 const DIAS_SEMANA = [
@@ -31,23 +33,30 @@ const DIAS_SEMANA = [
   { id: "viernes", label: "Viernes", short: "Vie" },
 ];
 
-// Variantes de animación de pantalla (Optimizadas para GPU)
+const PRESETS_NOMBRE = [
+  "Hipertrofia 4 Días",
+  "Torso / Pierna",
+  "Empuje / Tirón",
+  "Full Body Express",
+];
+
+// Variantes de animación entre pantallas (Optimizadas para GPU)
 const stepVariants = {
-  initial: { opacity: 0, x: 18 },
+  initial: { opacity: 0, x: 16 },
   animate: { opacity: 1, x: 0 },
-  exit: { opacity: 0, x: -18 },
+  exit: { opacity: 0, x: -16 },
 };
 
 const tabContentVariants = {
-  initial: { opacity: 0, y: 8 },
+  initial: { opacity: 0, y: 6 },
   animate: { opacity: 1, y: 0 },
-  exit: { opacity: 0, y: -8 },
+  exit: { opacity: 0, y: -6 },
 };
 
-// Partículas de celebración con la paleta de la app (Blanco, sutil Lime y Flame)
+// Partículas de confeti livianas
 const CELEBRATION_PARTICLES = Array.from({ length: 20 }).map((_, i) => ({
   id: i,
-  left: `${5 + (i * 4.8)}%`,
+  left: `${5 + i * 4.8}%`,
   delay: (i % 6) * 0.05,
   size: i % 3 === 0 ? 7 : i % 2 === 0 ? 5 : 4,
   isRound: i % 2 === 0,
@@ -77,7 +86,10 @@ export default function RoutineCreator() {
   const [selectedMusculo, setSelectedMusculo] = useState(null);
   const [resumenSelectedDay, setResumenSelectedDay] = useState(null);
 
-  const gruposMuscularesOpciones = useMemo(() => Object.keys(ejerciciosPorMusculo), []);
+  const gruposMuscularesOpciones = useMemo(
+    () => Object.keys(ejerciciosPorMusculo),
+    []
+  );
   const ejerciciosDisponibles = useMemo(() => {
     return selectedMusculo ? ejerciciosPorMusculo[selectedMusculo] || [] : [];
   }, [selectedMusculo]);
@@ -93,7 +105,8 @@ export default function RoutineCreator() {
     );
   }, [routineData.dias]);
 
-  const tieneDatos = routineData.titulo.trim().length > 0 && diasSeleccionados.length > 0;
+  const tieneDatos =
+    routineData.titulo.trim().length > 0 && diasSeleccionados.length > 0;
   const currentStepIndex = STEPS.findIndex((s) => s.id === step);
 
   // Handlers
@@ -169,77 +182,67 @@ export default function RoutineCreator() {
 
   const handleGuardar = () => {
     if (tieneDatos) {
-      setLocation("/routine");
+      setLocation("/rutinas");
     }
   };
 
   return (
     <AnimatedPage>
-      <div className="flex flex-col bg-ink text-paper min-h-screen relative overflow-hidden">
+      <div className="flex flex-col bg-ink text-paper min-h-screen font-sans">
         
-        {/* ================= HERO SECTION CON GUÍA MOTIVACIONAL ================= */}
-        <HeroSection>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            type="button"
-            onClick={() => setLocation("/routine")}
-            className="touch-press inline-flex items-center gap-1 text-white/50 font-mono text-[11px] tracking-wider uppercase mb-3 hover:text-paper transition-colors cursor-pointer w-fit"
-          >
-            <ChevronLeft size={16} strokeWidth={2.5} />
-            Volver
-          </motion.button>
+        {/* ================= BARRA SUPERIOR INTEGRADA (SIN HERO) ================= */}
+        <header className="px-4 pt-4 pb-2 border-b border-ink-line bg-ink sticky top-0 z-30">
+          <div className="flex items-center justify-between mb-3">
+            {/* Botón Volver solicitado */}
+            <button
+              type="button"
+              onClick={() => setLocation("/rutinas")}
+              className="flex items-center gap-1.5 text-white/60 hover:text-paper active:scale-95 transition-all text-xs font-semibold uppercase tracking-widest cursor-pointer"
+            >
+              <ChevronLeft size={16} />
+              Volver
+            </button>
 
-          {/* Barra de Progreso Dinámica */}
-          <div className="flex items-center gap-1.5 mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-lime px-2 py-0.5 rounded-full bg-lime/10 border border-lime/20">
+              Paso {currentStepIndex + 1} de {STEPS.length}
+            </span>
+          </div>
+
+          {/* Stepper horizontal elegante */}
+          <div className="flex items-center gap-1.5 mb-2">
             {STEPS.map((s, idx) => (
-              <motion.div
+              <div
                 key={s.id}
-                animate={{
-                  backgroundColor: idx <= currentStepIndex ? "#ffffff" : "#2a2a2a",
-                  flexGrow: idx <= currentStepIndex ? 1 : 0,
-                  width: idx <= currentStepIndex ? "auto" : "12px",
-                }}
-                transition={{ duration: 0.25 }}
-                className="h-1 rounded-full"
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  idx <= currentStepIndex ? "flex-1 bg-paper" : "w-3 bg-ink-line"
+                }`}
               />
             ))}
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 font-mono text-[10px] font-bold tracking-widest uppercase">
-              Paso {currentStepIndex + 1} de {STEPS.length}
-            </span>
-            <span className="text-[11px] font-semibold tracking-wider uppercase text-white/60">
-              {step === "info" && "Personalización"}
-              {step === "dias" && "Frecuencia Semanal"}
-              {step === "ejercicios" && "Carga y Ejercicios"}
-              {step === "resumen" && "Confirmación"}
-            </span>
+          {/* Título y guía rápida de cada paso */}
+          <div className="pt-1 pb-1">
+            <h1 className="text-2xl sm:text-3xl font-black text-paper font-display tracking-tight leading-tight">
+              {step === "info" && "Nombra tu rutina."}
+              {step === "dias" && "¿Qué días entrenarás?"}
+              {step === "ejercicios" && "Organiza tus ejercicios."}
+              {step === "resumen" && "¡Tu rutina está lista!"}
+            </h1>
+            <p className="text-xs text-white/60 mt-0.5 leading-relaxed">
+              {step === "info" &&
+                "Asigna un nombre claro a tu plan para seguir tu evolución sesión a sesión."}
+              {step === "dias" &&
+                "Selecciona los días activos. Los no marcados quedarán como descanso."}
+              {step === "ejercicios" &&
+                "Elige un día, toca un grupo muscular y añade los ejercicios deseados."}
+              {step === "resumen" &&
+                "Revisa el desglose por día y guarda para empezar a entrenar."}
+            </p>
           </div>
+        </header>
 
-          <h1 className="mt-2 text-4xl font-black leading-[1.05] tracking-tight text-paper text-balance">
-            {step === "info" && "Nombra tu rutina."}
-            {step === "dias" && "Días de entreno."}
-            {step === "ejercicios" && "Carga muscular."}
-            {step === "resumen" && "¡Plan completado!"}
-          </h1>
-
-          {/* Guía motivacional con signos de puntuación */}
-          <p className="mt-2 text-xs font-medium text-white/65 leading-relaxed text-balance">
-            {step === "info" &&
-              "¿Cuál es tu próximo objetivo? Dale un nombre claro e inspirador a este plan para llevar el control de tus progresos."}
-            {step === "dias" &&
-              "La disciplina vence a la motivación. Elige los días que vas a entrenar; nosotros programaremos tus descansos de forma óptima."}
-            {step === "ejercicios" &&
-              "Diseña tus sesiones a medida. Selecciona cada día, navega por los grupos musculares y añade los ejercicios clave."}
-            {step === "resumen" &&
-              "¡Excelente trabajo! Tu rutina está estructurada y lista para la acción. Revisa el plan por día y dale a guardar."}
-          </p>
-        </HeroSection>
-
-        {/* ================= CONTENEDOR PRINCIPAL ================= */}
+        {/* ================= CONTENIDO PRINCIPAL DEL WIZARD ================= */}
         <main className="flex flex-col flex-1 px-4 pt-4 pb-36 relative">
-          
           <AnimatePresence mode="wait">
             
             {/* ================= PASO 1: NOMBRE ================= */}
@@ -250,7 +253,7 @@ export default function RoutineCreator() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
                 <form
@@ -258,25 +261,53 @@ export default function RoutineCreator() {
                     e.preventDefault();
                     if (!isNextDisabled) handleNextStep();
                   }}
+                  className="space-y-4"
                 >
                   <div className="bg-ink-soft rounded-2xl border border-ink-line p-4 shadow-sm">
                     <label className="text-[11px] font-bold uppercase tracking-wider text-white/50 mb-2 flex items-center gap-1.5">
-                      <Sparkles size={14} className="text-white/70" />
+                      <Sparkles size={14} className="text-lime" />
                       Nombre del plan
                     </label>
                     <input
                       type="text"
                       value={routineData.titulo}
                       onChange={(e) =>
-                        setRoutineData((prev) => ({ ...prev, titulo: e.target.value }))
+                        setRoutineData((prev) => ({
+                          ...prev,
+                          titulo: e.target.value,
+                        }))
                       }
                       placeholder="Ej. Hipertrofia 4 Días, Fuerza..."
-                      className="w-full px-3.5 py-3 rounded-xl bg-ink border border-ink-line text-paper placeholder:text-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/40 focus:outline-none transition-colors"
+                      className="w-full px-3.5 py-3 rounded-xl bg-ink border border-ink-line text-paper placeholder:text-white/20 focus:border-white/40 focus:ring-1 focus:ring-white/40 focus:outline-none transition-colors text-sm"
                       autoFocus
                     />
                     <p className="text-[11px] text-white/40 mt-2">
-                      💡 Consejo: Usa un título que te motive cada vez que abras la aplicación.
+                      💡 Consejo: Usa un título que te motive cada vez que abras la app.
                     </p>
+                  </div>
+
+                  {/* Sugerencias de títulos para novatos */}
+                  <div className="bg-ink-soft/60 rounded-2xl border border-ink-line/60 p-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-white/40 block mb-2.5">
+                      Sugerencias populares (toca una para usarla):
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {PRESETS_NOMBRE.map((preset) => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() =>
+                            setRoutineData((prev) => ({
+                              ...prev,
+                              titulo: preset,
+                            }))
+                          }
+                          className="px-3 py-1.5 rounded-xl bg-ink border border-ink-line text-xs font-semibold text-white/70 hover:text-paper hover:border-white/30 active:scale-95 transition-all cursor-pointer"
+                        >
+                          {preset}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </form>
               </motion.div>
@@ -290,25 +321,30 @@ export default function RoutineCreator() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
-                className="space-y-2"
+                transition={{ duration: 0.2 }}
+                className="space-y-3"
               >
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-1 gap-1">
+  <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">Frecuencia semanal</span>
+  <span className="text-xs font-bold text-lime">{diasSeleccionados.length} días seleccionados</span>
+</div>
+
                 <div className="bg-ink-soft rounded-2xl border border-ink-line overflow-hidden divide-y divide-ink-line">
                   {DIAS_SEMANA.map((d) => {
-                    const isSelected = routineData.diasSeleccionados.includes(d.id);
+                    const isSelected =
+                      routineData.diasSeleccionados.includes(d.id);
                     return (
-                      <motion.button
+                      <button
                         key={d.id}
-                        whileTap={{ scale: 0.98 }}
                         type="button"
                         onClick={() => handleToggleDay(d.id)}
-                        className={`touch-press w-full flex items-center justify-between px-4 py-3.5 text-left transition-colors ${
+                        className={`w-full flex items-center justify-between px-4 py-3.5 text-left active:scale-[0.99] transition-all cursor-pointer ${
                           isSelected ? "bg-white/[0.04]" : "hover:bg-white/[0.02]"
                         }`}
                       >
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-mono text-xs font-bold transition-colors ${
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
                               isSelected
                                 ? "bg-paper text-ink"
                                 : "bg-ink border border-ink-line text-white/40"
@@ -317,16 +353,22 @@ export default function RoutineCreator() {
                             {d.short}
                           </div>
                           <div>
-                            <p className={`text-sm font-bold ${isSelected ? "text-paper" : "text-white/60"}`}>
+                            <p
+                              className={`text-sm font-bold ${
+                                isSelected ? "text-paper" : "text-white/60"
+                              }`}
+                            >
                               {d.label}
                             </p>
                             <p className="text-[11px] text-white/40">
-                              {isSelected ? "Día de entrenamiento activo." : "Descanso programado."}
+                              {isSelected
+                                ? "Día de entrenamiento activo."
+                                : "Descanso programado."}
                             </p>
                           </div>
                         </div>
 
-                        {/* iOS Pill Check */}
+                        {/* Indicador Check */}
                         <div
                           className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all ${
                             isSelected
@@ -336,7 +378,7 @@ export default function RoutineCreator() {
                         >
                           <Check size={13} strokeWidth={3} />
                         </div>
-                      </motion.button>
+                      </button>
                     );
                   })}
                 </div>
@@ -351,104 +393,110 @@ export default function RoutineCreator() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                transition={{ duration: 0.2 }}
                 className="space-y-4"
               >
-                {/* Segmented Selector de Día */}
-                <div className="flex items-center gap-1.5 p-1 bg-ink-soft rounded-xl border border-ink-line overflow-x-auto no-scrollbar relative">
-                  {diasSeleccionados.map((d) => {
-                    const isActive = selectedDay === d.id;
-                    const count = routineData.dias[d.id]?.length || 0;
-                    return (
-                      <motion.button
-                        key={d.id}
-                        whileTap={{ scale: 0.96 }}
-                        type="button"
-                        onClick={() => setSelectedDay(d.id)}
-                        className={`touch-press relative z-10 flex-1 min-w-[70px] py-2 px-2 rounded-lg flex flex-col items-center gap-0.5 text-xs font-bold transition-colors ${
-                          isActive ? "text-ink" : "text-white/50 hover:text-paper"
-                        }`}
-                      >
-                        {isActive && (
-                          <motion.div
-                            layoutId="activeDayPill"
-                            className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
-                            transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                          />
-                        )}
-                        <span>{d.short}</span>
-                        <span
-                          className={`text-[9px] font-mono px-1.5 py-0.2 rounded-full ${
+                {/* 1. Selector de Día activo */}
+                <div>
+                  <label className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-1.5">
+                    <Calendar size={13} className="text-white/60" />
+                    1. Selecciona el día a configurar
+                  </label>
+                  <div className="flex items-center gap-1.5 p-1 bg-ink-soft rounded-xl border border-ink-line overflow-x-auto no-scrollbar relative">
+                    {diasSeleccionados.map((d) => {
+                      const isActive = selectedDay === d.id;
+                      const count = routineData.dias[d.id]?.length || 0;
+                      return (
+                        <button
+                          key={d.id}
+                          type="button"
+                          onClick={() => setSelectedDay(d.id)}
+                          className={`relative z-10 flex-1 min-w-[65px] py-2 px-1.5 rounded-lg flex flex-col items-center gap-0.5 text-xs font-bold transition-all cursor-pointer ${
                             isActive
-                              ? "bg-ink/10 text-ink font-black"
-                              : "bg-ink border border-ink-line text-white/40"
+                              ? "bg-paper text-ink shadow-sm"
+                              : "text-white/50 hover:text-paper"
                           }`}
                         >
-                          {count} ex
-                        </span>
-                      </motion.button>
-                    );
-                  })}
+                          <span>{d.short}</span>
+                          <span
+                            className={`text-[9px] px-1.5 py-0.2 rounded-full ${
+                              isActive
+                                ? "bg-ink/10 text-ink font-black"
+                                : "bg-ink border border-ink-line text-white/40"
+                            }`}
+                          >
+                            {count} ex
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 {selectedDay && (
                   <>
-                    {/* Selector de Músculos */}
+                    {/* 2. Selector de Grupo Muscular */}
                     <div>
                       <label className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center gap-1.5">
                         <Layers size={13} className="text-white/60" />
-                        Grupo Muscular
+                        2. Grupo muscular
                       </label>
                       <div className="flex gap-1.5 overflow-x-auto no-scrollbar pb-1">
                         {gruposMuscularesOpciones.map((musculo) => {
                           const isMusculoActive = selectedMusculo === musculo;
                           return (
-                            <motion.button
+                            <button
                               key={musculo}
-                              whileTap={{ scale: 0.95 }}
                               type="button"
                               onClick={() => setSelectedMusculo(musculo)}
-                              className={`touch-press whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all ${
+                              className={`whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide border transition-all active:scale-95 cursor-pointer ${
                                 isMusculoActive
                                   ? "bg-white/15 text-paper border-white/40 shadow-sm"
                                   : "bg-ink-soft border-ink-line text-white/60 hover:text-paper hover:bg-white/[0.04]"
                               }`}
                             >
-                              {musculo.charAt(0).toUpperCase() + musculo.slice(1)}
-                            </motion.button>
+                              {musculo.charAt(0).toUpperCase() +
+                                musculo.slice(1)}
+                            </button>
                           );
                         })}
                       </div>
                     </div>
 
-                    {/* Lista de Ejercicios Disponibles */}
+                    {/* 3. Lista de Ejercicios Disponibles */}
                     <div>
                       <label className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 flex items-center justify-between">
                         <span className="flex items-center gap-1.5">
                           <Dumbbell size={13} className="text-white/60" />
-                          Ejercicios de {selectedMusculo}
+                          3. Añade ejercicios de {selectedMusculo}
                         </span>
-                        <span className="font-mono text-[10px] text-white/30">
+                        <span className="text-[10px] text-white/30">
                           {ejerciciosDisponibles.length} disponibles
                         </span>
                       </label>
 
                       <div className="bg-ink-soft rounded-2xl border border-ink-line overflow-hidden divide-y divide-ink-line">
                         {ejerciciosDisponibles.map((exercise) => {
-                          const isSelected = routineData.dias[selectedDay]?.includes(exercise);
+                          const isSelected =
+                            routineData.dias[selectedDay]?.includes(exercise);
                           return (
-                            <motion.button
+                            <button
                               key={exercise}
-                              whileTap={{ scale: 0.99 }}
                               type="button"
-                              onClick={() => handleToggleExerciseToDay(exercise)}
-                              className={`touch-press w-full flex items-center justify-between px-4 py-3 text-left transition-colors ${
-                                isSelected ? "bg-white/[0.05]" : "hover:bg-white/[0.02]"
+                              onClick={() =>
+                                handleToggleExerciseToDay(exercise)
+                              }
+                              className={`w-full flex items-center justify-between px-4 py-3 text-left transition-colors cursor-pointer ${
+                                isSelected
+                                  ? "bg-white/[0.05]"
+                                  : "hover:bg-white/[0.02]"
                               }`}
                             >
                               <span
                                 className={`text-xs font-medium pr-2 ${
-                                  isSelected ? "text-paper font-bold" : "text-white/70"
+                                  isSelected
+                                    ? "text-paper font-bold"
+                                    : "text-white/70"
                                 }`}
                               >
                                 {exercise}
@@ -460,9 +508,13 @@ export default function RoutineCreator() {
                                     : "border-ink-line bg-ink text-white/40"
                                 }`}
                               >
-                                {isSelected ? <Check size={13} strokeWidth={3} /> : <Plus size={13} />}
+                                {isSelected ? (
+                                  <Check size={13} strokeWidth={3} />
+                                ) : (
+                                  <Plus size={13} />
+                                )}
                               </div>
-                            </motion.button>
+                            </button>
                           );
                         })}
                       </div>
@@ -470,28 +522,28 @@ export default function RoutineCreator() {
 
                     {/* Resumen del Día Actual */}
                     {routineData.dias[selectedDay]?.length > 0 && (
-                      <div className="pt-2">
+                      <div className="pt-1">
                         <label className="text-[11px] font-bold uppercase tracking-wider text-white/40 mb-2 block">
-                          Seleccionados para {selectedDay} ({routineData.dias[selectedDay].length})
+                          Asignados a {selectedDay} (
+                          {routineData.dias[selectedDay].length})
                         </label>
                         <div className="flex flex-wrap gap-1.5">
                           {routineData.dias[selectedDay].map((exercise) => (
-                            <motion.span
+                            <span
                               key={exercise}
-                              initial={{ scale: 0.9, opacity: 0 }}
-                              animate={{ scale: 1, opacity: 1 }}
-                              exit={{ scale: 0.9, opacity: 0 }}
                               className="inline-flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-ink-soft border border-ink-line text-xs font-medium text-paper"
                             >
                               {exercise}
                               <button
                                 type="button"
-                                onClick={() => handleRemoveExercise(selectedDay, exercise)}
-                                className="touch-press p-0.5 rounded hover:bg-white/10 text-white/40 hover:text-flame transition-colors"
+                                onClick={() =>
+                                  handleRemoveExercise(selectedDay, exercise)
+                                }
+                                className="p-0.5 rounded hover:bg-white/10 text-white/40 hover:text-flame transition-colors cursor-pointer"
                               >
                                 <Trash2 size={12} />
                               </button>
-                            </motion.span>
+                            </span>
                           ))}
                         </div>
                       </div>
@@ -501,7 +553,7 @@ export default function RoutineCreator() {
               </motion.div>
             )}
 
-            {/* ================= PASO 4: RESUMEN CON TABS Y CONFETI ================= */}
+            {/* ================= PASO 4: RESUMEN CON CONFETI ================= */}
             {step === "resumen" && (
               <motion.div
                 key="step-resumen"
@@ -509,10 +561,10 @@ export default function RoutineCreator() {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+                transition={{ duration: 0.2 }}
                 className="space-y-3 relative"
               >
-                {/* Lluvia de Confeti Animada (Ligera para GPU) */}
+                {/* Lluvia de Confeti Animada */}
                 <div className="pointer-events-none absolute inset-0 -top-6 overflow-hidden z-20">
                   {CELEBRATION_PARTICLES.map((p) => (
                     <motion.div
@@ -544,49 +596,55 @@ export default function RoutineCreator() {
                 {/* Header Resumen */}
                 <div className="bg-ink-soft border border-ink-line rounded-2xl p-4 flex items-center justify-between shadow-sm">
                   <div>
-                    <span className="text-[10px] font-mono uppercase tracking-widest text-white/40">
-                      Rutina lista para guardar
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-lime">
+                      Plan completado
                     </span>
-                    <h3 className="text-xl font-black text-paper mt-0.5">{routineData.titulo}</h3>
+                    <h3 className="text-xl font-black text-paper mt-0.5 font-display">
+                      {routineData.titulo}
+                    </h3>
                   </div>
                   <div className="text-right">
-                    <span className="text-xl font-black text-paper font-mono">{totalEjercicios}</span>
-                    <p className="text-[10px] text-white/40 uppercase tracking-wider font-mono">Ejercicios</p>
+                    <span className="text-xl font-black text-paper font-display">
+                      {totalEjercicios}
+                    </span>
+                    <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                      Ejercicios
+                    </p>
                   </div>
                 </div>
 
-                {/* Segmented Day Tabs en el Resumen */}
+                {/* Segmented Day Tabs */}
                 <div className="flex p-1 bg-ink-soft rounded-xl border border-ink-line overflow-x-auto no-scrollbar relative">
                   {diasSeleccionados.map((d) => {
                     const isTabActive = resumenSelectedDay === d.id;
                     const count = routineData.dias[d.id]?.length || 0;
                     return (
-                      <motion.button
+                      <button
                         key={d.id}
-                        whileTap={{ scale: 0.96 }}
                         type="button"
                         onClick={() => setResumenSelectedDay(d.id)}
-                        className={`touch-press relative z-10 flex-1 py-2 px-1 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-colors flex flex-col items-center gap-0.5 ${
-                          isTabActive ? "text-ink" : "text-white/40 hover:text-paper"
+                        className={`relative z-10 flex-1 py-2 px-1 text-xs font-extrabold uppercase tracking-wider rounded-lg transition-all flex flex-col items-center gap-0.5 cursor-pointer ${
+                          isTabActive
+                            ? "bg-paper text-ink shadow-sm"
+                            : "text-white/40 hover:text-paper"
                         }`}
                       >
-                        {isTabActive && (
-                          <motion.div
-                            layoutId="activeResumenDayTab"
-                            className="absolute inset-0 bg-paper rounded-lg -z-10 shadow-sm"
-                            transition={{ type: "spring", stiffness: 450, damping: 35 }}
-                          />
-                        )}
                         <span>{d.short}</span>
-                        <span className={`text-[9px] font-mono ${isTabActive ? "text-ink/70 font-bold" : "text-white/30"}`}>
+                        <span
+                          className={`text-[9px] ${
+                            isTabActive
+                              ? "text-ink/70 font-bold"
+                              : "text-white/30"
+                          }`}
+                        >
                           ({count})
                         </span>
-                      </motion.button>
+                      </button>
                     );
                   })}
                 </div>
 
-                {/* Contenido Animado del Día Seleccionado en Resumen */}
+                {/* Contenido del Día en Resumen */}
                 <AnimatePresence mode="wait">
                   {resumenSelectedDay && (
                     <motion.div
@@ -602,25 +660,38 @@ export default function RoutineCreator() {
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-white/60" />
                           <h4 className="text-xs font-bold uppercase tracking-wider text-paper">
-                            {DIAS_SEMANA.find(d => d.id === resumenSelectedDay)?.label}
+                            {
+                              DIAS_SEMANA.find(
+                                (d) => d.id === resumenSelectedDay
+                              )?.label
+                            }
                           </h4>
                         </div>
-                        <span className="font-mono text-[10px] text-white/40">
-                          {(routineData.dias[resumenSelectedDay] || []).length} asignados
+                        <span className="text-[10px] text-white/40">
+                          {
+                            (routineData.dias[resumenSelectedDay] || [])
+                              .length
+                          }{" "}
+                          asignados
                         </span>
                       </div>
 
                       <div className="divide-y divide-ink-line max-h-[220px] overflow-y-auto">
-                        {(routineData.dias[resumenSelectedDay] || []).length > 0 ? (
-                          routineData.dias[resumenSelectedDay].map((ex, idx) => (
-                            <div
-                              key={ex}
-                              className="px-4 py-2.5 flex items-center justify-between text-xs text-white/80"
-                            >
-                              <span className="font-medium">{ex}</span>
-                              <span className="font-mono text-[10px] text-white/30">#{idx + 1}</span>
-                            </div>
-                          ))
+                        {(routineData.dias[resumenSelectedDay] || []).length >
+                        0 ? (
+                          routineData.dias[resumenSelectedDay].map(
+                            (ex, idx) => (
+                              <div
+                                key={ex}
+                                className="px-4 py-2.5 flex items-center justify-between text-xs text-white/80"
+                              >
+                                <span className="font-medium">{ex}</span>
+                                <span className="text-[10px] text-white/30">
+                                  #{idx + 1}
+                                </span>
+                              </div>
+                            )
+                          )
                         ) : (
                           <div className="px-4 py-6 text-xs text-white/30 italic text-center">
                             Día de descanso programado.
@@ -632,24 +703,25 @@ export default function RoutineCreator() {
                 </AnimatePresence>
               </motion.div>
             )}
-
           </AnimatePresence>
 
-          {/* ================= BOTONES DE ACCIÓN (PASO 4 EN BLANCO CON TEXTO NEGRO) ================= */}
+          {/* ================= BOTONES DE ACCIÓN FLUIDOS ================= */}
           <div className="mt-auto pt-8 space-y-2">
             <motion.button
               whileTap={{ scale: 0.98 }}
               type="button"
               onClick={step === "resumen" ? handleGuardar : handleNextStep}
               disabled={isNextDisabled}
-              className={`touch-press w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all ${
+              className={`w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-extrabold text-xs uppercase tracking-wider transition-all cursor-pointer ${
                 isNextDisabled
                   ? "opacity-30 cursor-not-allowed bg-ink-soft border border-ink-line text-white/40"
                   : "bg-paper text-ink shadow-[0_4px_16px_rgba(255,255,255,0.15)]"
               }`}
             >
               {step === "resumen" ? "Guardar Rutina" : "Continuar"}
-              {step !== "resumen" && <ChevronRight size={16} strokeWidth={2.5} />}
+              {step !== "resumen" && (
+                <ChevronRight size={16} strokeWidth={2.5} />
+              )}
             </motion.button>
 
             {step !== "info" && (
@@ -657,22 +729,20 @@ export default function RoutineCreator() {
                 whileTap={{ scale: 0.98 }}
                 type="button"
                 onClick={handlePrevStep}
-                className="touch-press secondary-btn w-full py-3 text-xs uppercase tracking-wider font-bold bg-ink-soft border-ink-line"
+                className="secondary-btn w-full py-3 text-xs uppercase tracking-wider font-bold bg-ink-soft border-ink-line cursor-pointer"
               >
                 Atrás
               </motion.button>
             )}
 
-            <motion.button
-              whileTap={{ scale: 0.98 }}
+            <button
               type="button"
-              onClick={() => setLocation("/routine")}
-              className="touch-press text-[11px] font-semibold uppercase tracking-widest text-white/40 hover:text-paper w-full py-2 transition-colors text-center block"
+              onClick={() => setLocation("/rutinas")}
+              className="text-[11px] font-semibold uppercase tracking-widest text-white/40 hover:text-paper w-full py-2 transition-colors text-center block cursor-pointer"
             >
               Cancelar
-            </motion.button>
+            </button>
           </div>
-
         </main>
       </div>
     </AnimatedPage>

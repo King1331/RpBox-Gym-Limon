@@ -1,7 +1,10 @@
 import React from 'react';
 import { Zap } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 export function MembershipCard() {
+  const [, setLocation] = useLocation();
+
   return (
     <section
       aria-labelledby="membership-title"
@@ -31,6 +34,7 @@ export function MembershipCard() {
 
       <button
         type="button"
+        onClick={() => setLocation('/staff')}
         className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-paper py-3.5 text-[14px] font-bold uppercase tracking-wide text-ink transition-transform active:scale-[0.98] cursor-pointer"
       >
         <Zap className="size-4 fill-ink" strokeWidth={2.5} aria-hidden="true" />

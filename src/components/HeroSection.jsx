@@ -7,7 +7,7 @@ export default function HeroSection({ children }) {
   const notificationsModal = useNotifications();
 
   return (
-    <section className="relative overflow-hidden shrink-0 min-h-[320px] flex flex-col justify-between">
+    <section className="relative overflow-hidden shrink-0 h-[320px] flex flex-col justify-between">
       {/* Imagen de fondo en JPG con renderizado estable */}
       <img
         src="/images/atleta5.jpg"
@@ -22,7 +22,7 @@ export default function HeroSection({ children }) {
       <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-ink/30 to-ink pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-r from-ink/70 to-transparent pointer-events-none" />
 
-      <div className="relative flex flex-col z-10">
+      <div className="relative flex flex-col z-10 h-full">
         {/* Header superior adaptado al notch con safe-area */}
         <header className="flex items-center justify-end px-5 pt-[calc(env(safe-area-inset-top)+1rem)]">
           <button
@@ -36,9 +36,9 @@ export default function HeroSection({ children }) {
           </button>
         </header>
 
-        {/* Contenedor dinámico */}
-        <div className="px-5 pb-8 pt-12">
-          {children}
+        {/* Contenedor dinámico con altura restante para centrar el contenido */}
+        <div className="flex-1 flex items-end px-5 pb-8 pt-4">
+          <div className="w-full">{children}</div>
         </div>
       </div>
 

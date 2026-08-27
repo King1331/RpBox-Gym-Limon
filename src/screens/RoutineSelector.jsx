@@ -97,10 +97,16 @@ export default function RoutineSelector() {
             Volver
           </button>
 
-          <h1 className="text-4xl sm:text-5xl font-semibold leading-[0.95] tracking-tight text-paper text-balance font-display">
-            Rutinas
+          <div className="flex items-center gap-1.5 mb-2">
+            <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 text-[10px] font-bold tracking-widest uppercase">
+              Programación
+            </span>
+          </div>
+
+          <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
+            Rutinas.
           </h1>
-          <p className="mt-2 text-sm font-medium text-white/60 leading-relaxed">
+          <p className="mt-3 text-base font-medium text-white/70">
             Elige una rutina o crea la tuya propia.
           </p>
         </HeroSection>
