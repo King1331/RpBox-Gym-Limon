@@ -191,7 +191,7 @@ export default function RoutineCreator() {
       <div className="flex flex-col bg-ink text-paper min-h-screen font-sans">
         
         {/* ================= BARRA SUPERIOR INTEGRADA (SIN HERO) ================= */}
-        <header className="px-4 pt-4 pb-2 border-b border-ink-line bg-ink sticky top-0 z-30">
+        <header className="px-4 pt-[calc(env(safe-area-inset-top)+1.5rem)] pb-2 border-b border-ink-line bg-ink sticky top-0 z-30">
           <div className="flex items-center justify-between mb-3">
             {/* Botón Volver solicitado */}
             <button
@@ -325,9 +325,13 @@ export default function RoutineCreator() {
                 className="space-y-3"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between px-1 gap-1">
-  <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">Frecuencia semanal</span>
-  <span className="text-xs font-bold text-lime">{diasSeleccionados.length} días seleccionados</span>
-</div>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white/40">
+                    Frecuencia semanal
+                  </span>
+                  <span className="text-xs font-bold text-lime">
+                    {diasSeleccionados.length} días seleccionados
+                  </span>
+                </div>
 
                 <div className="bg-ink-soft rounded-2xl border border-ink-line overflow-hidden divide-y divide-ink-line">
                   {DIAS_SEMANA.map((d) => {
