@@ -82,6 +82,18 @@ export default function RoutineSelector() {
     }
   };
 
+  const handleStartWorkout = (rutina) => {
+    // Guardar la rutina seleccionada en localStorage para que ExerciseScreen la recupere
+    localStorage.setItem('activeRoutine', JSON.stringify(rutina));
+    setLocation("/workout/exercise");
+  };
+
+  const handleContinueWorkout = () => {
+    // Guardar la rutina en curso en localStorage
+    localStorage.setItem('activeRoutine', JSON.stringify(rutinaEnCurso));
+    setLocation("/workout/exercise");
+  };
+
   return (
     <AnimatedPage>
       <div className="flex flex-col bg-ink text-paper min-h-screen font-sans">
@@ -139,7 +151,7 @@ export default function RoutineSelector() {
             <section className="space-y-2">
               <button
                 type="button"
-                onClick={() => setLocation("/routine")}
+                onClick={handleContinueWorkout}
                 className="w-full relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100"
               >
                 <div 
@@ -260,7 +272,7 @@ export default function RoutineSelector() {
 
                           <button
                             type="button"
-                            onClick={() => setLocation("/routine")}
+                            onClick={() => handleStartWorkout(rutina)}
                             className="w-full flex items-center justify-center gap-2 rounded-xl bg-lime py-3 text-ink font-bold text-sm uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform"
                           >
                             <Play size={16} className="fill-ink" />

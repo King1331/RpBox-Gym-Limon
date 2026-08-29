@@ -15,6 +15,10 @@ export default function SessionCard() {
   // Mostrar solo el primer ejercicio
   const visibleExercises = exercises.slice(0, 1);
 
+  const handleStartWorkout = () => {
+    setLocation('/workout/exercise');
+  };
+
   return (
     <section
       aria-labelledby="session-title"
@@ -55,7 +59,7 @@ export default function SessionCard() {
       {/* Botón protagonista con navegación */}
       <button
         type="button"
-        onClick={() => setLocation('/rutina')}
+        onClick={handleStartWorkout}
         className="mt-5 flex w-full items-center justify-between rounded-full bg-lime py-2 pl-5 pr-2 text-ink transition-transform active:scale-[0.98] cursor-pointer"
       >
         <span className="text-[14px] sm:text-[15px] font-bold uppercase tracking-wide">

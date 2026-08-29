@@ -12,6 +12,9 @@ const navItems = [
 
 export default function AppShell({ children }) {
   const [location] = useLocation();
+  
+  // Ocultar BottomNav en pantallas de workout guiado
+  const isWorkoutScreen = location.startsWith('/workout');
 
   return (
     <div className="app-frame">
@@ -21,30 +24,32 @@ export default function AppShell({ children }) {
         {children}
       </main>
 
-      <nav className="bottom-nav" aria-label="Navegación principal">
-        {navItems.map(({ href, label, icon: Icon }) => {
-          // Corregir condición para la pestaña "Rutina"
-          const isItemActive =
-            location === href ||
-            (href === '/rutinas' && (location === '/routine' || location === '/crear-rutina'));
+      {!isWorkoutScreen && (
+        <nav className="bottom-nav" aria-label="Navegación principal">
+          {navItems.map(({ href, label, icon: Icon }) => {
+            // Corregir condición para la pestaña "Rutina"
+            const isItemActive =
+              location === href ||
+              (href === '/rutinas' && (location === '/routine' || location === '/crear-rutina'));
 
-          return (
-            <Link
-              href={href}
-              className={cn(
-                'nav-item',
-                isItemActive && 'active',
-                'active:scale-95 transition-transform duration-100'
-              )}
-              data-testid={`link-nav-${label.toLowerCase()}`}
-              key={href}
-            >
-              <Icon size={19} strokeWidth={isItemActive ? 2.5 : 1.8} />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                href={href}
+                className={cn(
+                  'nav-item',
+                  isItemActive && 'active',
+                  'active:scale-95 transition-transform duration-100'
+                )}
+                data-testid={`link-nav-${label.toLowerCase()}`}
+                key={href}
+              >
+                <Icon size={19} strokeWidth={isItemActive ? 2.5 : 1.8} />
+                <span>{label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+      )}
     </div>
   );
 }
