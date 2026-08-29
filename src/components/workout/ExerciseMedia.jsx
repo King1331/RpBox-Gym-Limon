@@ -23,7 +23,7 @@ export default function ExerciseMedia({ exercise, compact = false, showPlay = tr
   };
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl bg-ink-soft border border-ink-line w-full max-w-full ${compact ? "aspect-square" : "aspect-[4/5]"}`}>
+    <div className={`relative overflow-hidden rounded-2xl bg-ink-soft border border-ink-line w-full max-w-full ${compact ? "aspect-[1/0.9]" : "aspect-[4/4.5]"}`}>
       {/* Video o thumbnail */}
       {exercise.videoUrl ? (
         <video
