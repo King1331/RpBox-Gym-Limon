@@ -1,5 +1,5 @@
 import { X, Check } from "lucide-react";
-import { useWorkoutSession } from "@/lib/workout/WorkoutContext";
+import { useWorkoutSession } from "../../lib/workout/WorkoutContext";
 import ExerciseMedia from "./ExerciseMedia";
 
 // Drawer (hamburguesa) con la lista de ejercicios de la rutina.
@@ -10,8 +10,14 @@ export default function ExerciseListDrawer({ open, onClose, onJump }) {
   return (
     <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true">
       <div className="absolute inset-0 bg-black/60 animate-fade-in" onClick={onClose} />
-      <div className="relative w-full max-w-sm h-full bg-ink border-l border-ink-line animate-slide-in-right flex flex-col safe-top">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-ink-line">
+      <div 
+        className="relative w-full max-w-sm h-full bg-ink border-l border-ink-line animate-slide-in-right flex flex-col"
+        style={{ 
+          paddingTop: 'calc(env(safe-area-inset-top) + 1rem)',
+          paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
+        }}
+      >
+        <div className="flex items-center justify-between px-5 pb-4 border-b border-ink-line">
           <div>
             <div className="text-[10px] uppercase tracking-widest text-white/40">Vista general</div>
             <div className="text-lg font-extrabold tracking-tight">Tu rutina</div>
@@ -21,7 +27,7 @@ export default function ExerciseListDrawer({ open, onClose, onJump }) {
           </button>
         </div>
 
-        <div className="shell-content flex-1 px-4 py-4 space-y-3">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {exercises.map((ex, i) => {
             const done = completedSetsFor(ex.id).length;
             const isCurrent = i === exerciseIndex;

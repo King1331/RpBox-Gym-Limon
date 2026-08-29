@@ -36,11 +36,17 @@ export default function WorkoutCompleteScreen() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-ink text-paper overflow-x-hidden w-full max-w-full">
+    <div 
+      className="flex flex-col min-h-screen bg-ink text-paper overflow-x-hidden w-full max-w-full"
+      style={{ 
+        paddingTop: 'calc(env(safe-area-inset-top) + 1rem)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 1rem)'
+      }}
+    >
       <Confetti fire />
 
       {/* Contenido scrolleable */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-10 pb-32 w-full max-w-full">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-6 pt-6 pb-28 w-full max-w-full">
         <div className="flex flex-col items-center text-center">
           <div className="w-20 h-20 rounded-full bg-lime/15 border border-lime/30 flex items-center justify-center animate-pop">
             <Trophy size={36} className="text-lime" strokeWidth={2} />
