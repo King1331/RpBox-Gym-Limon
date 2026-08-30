@@ -100,18 +100,18 @@ export default function ExerciseScreen() {
         </button>
       </div>
 
-      {/* Contenido scrolleable */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 pt-4 pb-28 w-full max-w-full">
+      {/* Contenido scrolleable con scroll reducido un 5% */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-5 pt-3 pb-24 w-full max-w-full">
         <div key={`${exerciseIndex}-${setIndex}`} className="animate-fade-slide-up w-full max-w-full">
-          <div className="mb-4">
+          <div className="mb-3">
             <div className="text-[10px] uppercase tracking-widest text-lime font-semibold mb-1">{currentExercise.grupoMuscular}</div>
             <h1 className="text-3xl font-extrabold tracking-tight leading-tight">{currentExercise.nombre}</h1>
-            <p className="text-sm text-white/50 mt-1.5 leading-snug">{currentExercise.descripcion}</p>
+            <p className="text-sm text-white/50 mt-1 leading-snug">{currentExercise.descripcion}</p>
           </div>
 
           <ExerciseMedia exercise={currentExercise} />
 
-          <div className="mt-4">
+          <div className="mt-3">
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] uppercase tracking-widest text-white/40">Progreso de series</span>
               <span className="text-[11px] font-semibold text-white/70">Serie {setIndex + 1} de {currentExercise.series}</span>
@@ -119,21 +119,21 @@ export default function ExerciseScreen() {
             <SeriesProgressDots total={currentExercise.series} current={setIndex} completed={done} />
           </div>
 
-          <div className="mt-5">
-            <div className="flex items-center justify-between mb-3">
+          <div className="mt-4">
+            <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] uppercase tracking-widest text-white/40">Objetivo</span>
               <span className="text-sm font-bold">{currentExercise.reps} reps · {currentExercise.descansoEntreSeries}s descanso</span>
             </div>
             <SetInputRow peso={peso} reps={reps} onChangePeso={setPeso} onChangeReps={setReps} />
           </div>
 
-          <div className="mt-5">
+          <div className="mt-4">
             <div className="text-[11px] uppercase tracking-widest text-white/40 mb-2">Series completadas</div>
             <SeriesCheckDots total={currentExercise.series} completed={done} />
           </div>
 
-          {/* Botón Completar serie - En el flujo del contenido */}
-          <div className="mt-6">
+          {/* Botón Completar serie - en el flujo, acompaña al scroll */}
+          <div className="mt-5">
             <button
               onClick={handleComplete}
               className="w-full h-14 rounded-2xl bg-lime text-ink font-extrabold text-lg flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
