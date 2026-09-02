@@ -1,13 +1,16 @@
 import React from 'react';
 import { Flame, Dumbbell, HeartPulse } from 'lucide-react';
-
-const stats = [
-  { icon: Flame, value: '04', label: 'Racha', detail: '+1 sesión', accent: 'text-flame' },
-  { icon: Dumbbell, value: '12.4k', label: 'Volumen', detail: '+8.6%', accent: 'text-lime' },
-  { icon: HeartPulse, value: '82%', label: 'Recup.', detail: 'Excelente', accent: 'text-paper' },
-];
+import { useWorkoutSession } from '../lib/workout/WorkoutContext';
 
 export function Scoreboard() {
+  const { streak } = useWorkoutSession();
+
+  const stats = [
+    { icon: Flame, value: String(streak).padStart(2, '0'), label: 'Racha', detail: '+1 sesión', accent: 'text-flame' },
+    { icon: Dumbbell, value: '12.4k', label: 'Volumen', detail: '+8.6%', accent: 'text-lime' },
+    { icon: HeartPulse, value: '82%', label: 'Recup.', detail: 'Excelente', accent: 'text-paper' },
+  ];
+
   return (
     <section aria-labelledby="scoreboard-title">
       <div className="mb-3 flex items-baseline justify-between px-1">
