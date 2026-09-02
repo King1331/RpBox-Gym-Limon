@@ -18,13 +18,42 @@ import StreakScreen from './screens/workout/StreakScreen';
 import { WorkoutProvider } from './lib/workout/WorkoutContext';
 // ------------------------
 
+// --- ADMIN ---
+import AdminLayout from './components/admin/AdminLayout';
+import AdminDashboard from './screens/admin/AdminDashboard';
+import AdminClientes from './screens/admin/AdminClientes';
+import AdminPagos from './screens/admin/AdminPagos';
+import AdminRutinas from './screens/admin/AdminRutinas';
+import AdminCoaches from './screens/admin/AdminCoaches';
+// ------------------------
+
 import ProgressScreen from './screens/ProgressScreen';
 import StaffScreen from './screens/StaffScreen';
 import { ReloadPrompt } from './components/ReloadPrompt';
 
 export default function App() {
   const [location] = useLocation();
+  const isAdmin = location.startsWith('/admin');
 
+  // Panel administrativo: no usa AppShell ni bottom nav
+  if (isAdmin) {
+    return (
+      <AdminLayout>
+        <Switch location={location}>
+          <Route path="/admin" component={AdminDashboard} />
+          <Route path="/admin/clientes" component={AdminClientes} />
+          <Route path="/admin/pagos" component={AdminPagos} />
+          <Route path="/admin/rutinas" component={AdminRutinas} />
+          <Route path="/admin/coaches" component={AdminCoaches} />
+          <Route>
+            <AdminDashboard />
+          </Route>
+        </Switch>
+      </AdminLayout>
+    );
+  }
+
+  // Aplicación principal
   return (
     <>
       <AppShell>

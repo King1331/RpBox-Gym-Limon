@@ -10,7 +10,6 @@ import {
   Flame,
   Layers,
 } from "lucide-react";
-import HeroSection from "../components/HeroSection";
 import AnimatedPage from "../components/AnimatedPage";
 import { rutinasMock } from "../lib/rutinasMock";
 
@@ -26,7 +25,6 @@ export default function RoutineSelector() {
   const [currentPage, setCurrentPage] = useState(0);
   const ITEMS_PER_PAGE = 1;
 
-  // Rutina en curso
   const rawRutinaEnCurso = rutinasMock.find((r) => r.enCurso) || rutinasMock[0];
   const rutinaEnCurso = useMemo(() => {
     if (!rawRutinaEnCurso) return null;
@@ -83,13 +81,11 @@ export default function RoutineSelector() {
   };
 
   const handleStartWorkout = (rutina) => {
-    // Guardar la rutina seleccionada en localStorage para que ExerciseScreen la recupere
     localStorage.setItem('activeRoutine', JSON.stringify(rutina));
     setLocation("/workout/exercise");
   };
 
   const handleContinueWorkout = () => {
-    // Guardar la rutina en curso en localStorage
     localStorage.setItem('activeRoutine', JSON.stringify(rutinaEnCurso));
     setLocation("/workout/exercise");
   };
@@ -97,34 +93,33 @@ export default function RoutineSelector() {
   return (
     <AnimatedPage>
       <div className="flex flex-col bg-ink text-paper min-h-screen font-sans">
-        
-        {/* ================= HERO SECTION ================= */}
-        <HeroSection>
-          <button
-            type="button"
-            onClick={handleGoBack}
-            className="flex items-center gap-1.5 text-white/60 hover:text-paper active:scale-95 transition-all mb-4 text-xs font-semibold uppercase tracking-widest"
-          >
-            <ChevronLeft size={16} />
-            Volver
-          </button>
-
-          <div className="flex items-center gap-1.5 mb-2">
-            <span className="flex h-5 items-center px-2 rounded-full bg-ink-soft border border-ink-line text-white/80 text-[10px] font-bold tracking-widest uppercase">
-              Programación
-            </span>
+        {/* Barra superior compacta con título centrado */}
+        <div
+          className="grid grid-cols-3 items-center px-4 py-3 border-b border-ink-line bg-ink sticky top-0 z-30"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
+        >
+          <div className="justify-self-start">
+            <button
+              type="button"
+              onClick={handleGoBack}
+              className="icon-btn active:scale-95 transition-transform"
+              aria-label="Volver"
+            >
+              <ChevronLeft size={18} strokeWidth={2.5} />
+            </button>
           </div>
 
-          <h1 className="mt-2 text-5xl font-extrabold leading-[0.95] tracking-tight text-paper text-balance">
-            Rutinas.
-          </h1>
-          <p className="mt-3 text-base font-medium text-white/70">
-            Elige una rutina o crea la tuya propia.
-          </p>
-        </HeroSection>
+          <div className="text-center justify-self-center min-w-0 px-2">
+            <div className="text-[10px] uppercase tracking-widest text-lime font-semibold">Programación</div>
+            <div className="text-base font-extrabold tracking-tight truncate">Rutinas</div>
+          </div>
 
-        {/* ================= BOTÓN CREAR RUTINA (SIEMPRE VISIBLE) ================= */}
-        <div className="px-4 pt-2">
+          <div className="justify-self-end w-10" />
+        </div>
+
+        {/* Contenido principal */}
+        <main className="flex flex-col gap-4 px-4 pb-28 pt-3">
+          {/* Botón crear rutina */}
           <button
             type="button"
             onClick={() => setLocation("/crear-rutina")}
@@ -141,188 +136,177 @@ export default function RoutineSelector() {
             </span>
             <ChevronRight size={18} className="text-white/40" />
           </button>
-        </div>
 
-        {/* ================= MAIN CONTENT ================= */}
-        <main className="flex flex-col gap-5 px-4 pb-36 pt-4">
-          
-          {/* ================= BANNER DE SESIÓN EN CURSO ================= */}
+          {/* Banner de sesión en curso */}
           {rutinaEnCurso && (
-            <section className="space-y-2">
-              <button
-                type="button"
-                onClick={handleContinueWorkout}
-                className="w-full relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100"
-              >
-                <div 
-                  className="absolute inset-0 bg-cover bg-center"
-                  style={{ backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})` }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/70 to-ink/30" />
+            <button
+              type="button"
+              onClick={handleContinueWorkout}
+              className="w-full relative rounded-2xl overflow-hidden border border-ink-line cursor-pointer shadow-sm active:scale-[0.98] transition-transform duration-100"
+            >
+              <div 
+                className="absolute inset-0 bg-cover bg-center"
+                style={{ backgroundImage: `url(${rutinaEnCurso?.imagen || DEFAULT_IMAGES[0]})` }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/70 to-ink/30" />
 
-                <div className="relative z-10 p-4 flex items-center justify-between gap-3">
-                  <div>
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-flame/10 border border-flame/20 text-flame text-[10px] font-semibold uppercase tracking-wider">
-                      <Flame size={12} />
-                      En curso
-                    </span>
-                    <h2 className="mt-2 text-xl font-semibold text-paper leading-tight font-display">
-                      {rutinaEnCurso?.titulo}
-                    </h2>
-                    <p className="text-xs text-white/60 mt-0.5">
-                      {rutinaEnCurso?.duracion || 0} min · {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
-                    </p>
-                  </div>
-                  <div className="shrink-0 bg-lime text-ink rounded-full px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-sm">
-                    Continuar
-                  </div>
+              <div className="relative z-10 p-4 flex items-center justify-between gap-3">
+                <div>
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-flame/10 border border-flame/20 text-flame text-[10px] font-semibold uppercase tracking-wider">
+                    <Flame size={12} />
+                    En curso
+                  </span>
+                  <h2 className="mt-2 text-xl font-semibold text-paper leading-tight font-display">
+                    {rutinaEnCurso?.titulo}
+                  </h2>
+                  <p className="text-xs text-white/60 mt-0.5">
+                    {rutinaEnCurso?.duracion || 0} min · {rutinaEnCurso?.ejercicios?.length || 0} ejercicios
+                  </p>
                 </div>
-              </button>
-            </section>
+                <div className="shrink-0 bg-lime text-ink rounded-full px-4 py-2 font-bold text-xs uppercase tracking-wider shadow-sm">
+                  Continuar
+                </div>
+              </div>
+            </button>
           )}
 
-          {/* ================= PESTAÑAS GRANDES ================= */}
-          <section className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleTabChange("coach")}
-                className={`py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all active:scale-95 ${
-                  tab === "coach"
-                    ? "bg-lime text-ink shadow-sm"
-                    : "bg-ink-soft text-white/50 border border-ink-line hover:text-paper"
-                }`}
-              >
-                Coach
-              </button>
-              <button
-                type="button"
-                onClick={() => handleTabChange("mio")}
-                className={`py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all active:scale-95 ${
-                  tab === "mio"
-                    ? "bg-lime text-ink shadow-sm"
-                    : "bg-ink-soft text-white/50 border border-ink-line hover:text-paper"
-                }`}
-              >
-                Mis rutinas
-              </button>
-            </div>
+          {/* Pestañas Coach / Mis rutinas */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              type="button"
+              onClick={() => handleTabChange("coach")}
+              className={`py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all active:scale-95 ${
+                tab === "coach"
+                  ? "bg-lime text-ink shadow-sm"
+                  : "bg-ink-soft text-white/50 border border-ink-line hover:text-paper"
+              }`}
+            >
+              Coach
+            </button>
+            <button
+              type="button"
+              onClick={() => handleTabChange("mio")}
+              className={`py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all active:scale-95 ${
+                tab === "mio"
+                  ? "bg-lime text-ink shadow-sm"
+                  : "bg-ink-soft text-white/50 border border-ink-line hover:text-paper"
+              }`}
+            >
+              Mis rutinas
+            </button>
+          </div>
 
-            {/* ================= CARRUSEL DE TARJETAS ================= */}
-            {lista.length === 0 ? (
-              <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-12 px-4 text-center">
-                <div className="w-14 h-14 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
-                  <Layers size={24} />
-                </div>
-                <h4 className="text-base font-semibold text-paper">No hay rutinas disponibles</h4>
-                <p className="text-sm text-white/40 mt-1 max-w-[220px]">
-                  {tab === "mio"
-                    ? "Crea tu primera rutina con el botón superior."
-                    : "Tu coach aún no ha compartido rutinas contigo."}
-                </p>
+          {/* Lista de rutinas */}
+          {lista.length === 0 ? (
+            <div className="border border-ink-line rounded-2xl flex flex-col items-center justify-center py-12 px-4 text-center">
+              <div className="w-14 h-14 rounded-full bg-white/[0.04] border border-ink-line flex items-center justify-center mb-3 text-white/40">
+                <Layers size={24} />
               </div>
-            ) : (
-              <>
-                <div className="space-y-3">
-                  {paginatedLista.map((rutina, index) => {
-                    const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
-                    const exercises = rutina.ejercicios || [];
-                    const firstExercise = exercises[0];
+              <h4 className="text-base font-semibold text-paper">No hay rutinas disponibles</h4>
+              <p className="text-sm text-white/40 mt-1 max-w-[220px]">
+                {tab === "mio"
+                  ? "Crea tu primera rutina con el botón superior."
+                  : "Tu coach aún no ha compartido rutinas contigo."}
+              </p>
+            </div>
+          ) : (
+            <>
+              <div className="space-y-3">
+                {paginatedLista.map((rutina, index) => {
+                  const bgImage = rutina.imagen || DEFAULT_IMAGES[index % DEFAULT_IMAGES.length];
+                  const exercises = rutina.ejercicios || [];
+                  const firstExercise = exercises[0];
 
-                    return (
+                  return (
+                    <div 
+                      key={rutina.id} 
+                      className="border border-ink-line rounded-2xl overflow-hidden shadow-sm"
+                    >
                       <div 
-                        key={rutina.id} 
-                        className="border border-ink-line rounded-2xl overflow-hidden shadow-sm"
+                        className="relative p-4 bg-cover bg-center min-h-[120px] flex flex-col justify-between"
+                        style={{ backgroundImage: `url(${bgImage})` }}
                       >
-                        {/* Cabecera con Foto */}
-                        <div 
-                          className="relative p-4 bg-cover bg-center min-h-[120px] flex flex-col justify-between"
-                          style={{ backgroundImage: `url(${bgImage})` }}
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/40 to-transparent" />
 
-                          <div className="relative z-10">
-                            <h3 className="text-xl font-bold text-paper font-display">
-                              {rutina.titulo}
-                            </h3>
-                            <div className="flex items-center gap-3 text-xs text-white/70 mt-1">
-                              <span className="flex items-center gap-1">
-                                <Clock size={12} /> {rutina.duracion} min
-                              </span>
-                              <span>{rutina.musculos?.join(" · ") || "Cuerpo completo"}</span>
-                            </div>
+                        <div className="relative z-10">
+                          <h3 className="text-xl font-bold text-paper font-display">
+                            {rutina.titulo}
+                          </h3>
+                          <div className="flex items-center gap-3 text-xs text-white/70 mt-1">
+                            <span className="flex items-center gap-1">
+                              <Clock size={12} /> {rutina.duracion} min
+                            </span>
+                            <span>{rutina.musculos?.join(" · ") || "Cuerpo completo"}</span>
                           </div>
                         </div>
-
-                        {/* Cuerpo simplificado */}
-                        <div className="p-4 border-t border-ink-line">
-                          {firstExercise ? (
-                            <div className="flex items-center justify-between mb-3">
-                              <span className="flex items-center gap-2 text-sm text-paper/80">
-                                <Dumbbell size={14} className="text-white/40" />
-                                {typeof firstExercise === 'string' ? firstExercise : (firstExercise.nombre || 'Ejercicio')}
-                              </span>
-                              {exercises.length > 1 && (
-                                <span className="text-xs text-white/40">+{exercises.length - 1} más</span>
-                              )}
-                            </div>
-                          ) : (
-                            <p className="text-sm text-white/40 italic mb-3">Sin ejercicios</p>
-                          )}
-
-                          <button
-                            type="button"
-                            onClick={() => handleStartWorkout(rutina)}
-                            className="w-full flex items-center justify-center gap-2 rounded-xl bg-lime py-3 text-ink font-bold text-sm uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform"
-                          >
-                            <Play size={16} className="fill-ink" />
-                            Empezar rutina
-                          </button>
-                        </div>
                       </div>
-                    );
-                  })}
-                </div>
 
-                {/* Indicadores de página */}
-                {totalPages > 1 && (
-                  <div className="flex items-center justify-between pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 0))}
-                      disabled={currentPage === 0}
-                      className="p-2 rounded-lg bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform"
-                    >
-                      <ChevronLeft size={20} />
-                    </button>
+                      <div className="p-4 border-t border-ink-line">
+                        {firstExercise ? (
+                          <div className="flex items-center justify-between mb-3">
+                            <span className="flex items-center gap-2 text-sm text-paper/80">
+                              <Dumbbell size={14} className="text-white/40" />
+                              {typeof firstExercise === 'string' ? firstExercise : (firstExercise.nombre || 'Ejercicio')}
+                            </span>
+                            {exercises.length > 1 && (
+                              <span className="text-xs text-white/40">+{exercises.length - 1} más</span>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="text-sm text-white/40 italic mb-3">Sin ejercicios</p>
+                        )}
 
-                    <div className="flex items-center gap-1.5">
-                      {Array.from({ length: totalPages }).map((_, i) => (
                         <button
-                          key={i}
-                          onClick={() => setCurrentPage(i)}
-                          className={`h-2 rounded-full transition-all ${
-                            i === currentPage ? "w-6 bg-lime" : "w-2 bg-white/20"
-                          }`}
-                          aria-label={`Ir a página ${i + 1}`}
-                        />
-                      ))}
+                          type="button"
+                          onClick={() => handleStartWorkout(rutina)}
+                          className="w-full flex items-center justify-center gap-2 rounded-xl bg-lime py-3 text-ink font-bold text-sm uppercase tracking-wider shadow-sm active:scale-[0.98] transition-transform"
+                        >
+                          <Play size={16} className="fill-ink" />
+                          Empezar rutina
+                        </button>
+                      </div>
                     </div>
+                  );
+                })}
+              </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages - 1))}
-                      disabled={currentPage === totalPages - 1}
-                      className="p-2 rounded-lg bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform"
-                    >
-                      <ChevronRight size={20} />
-                    </button>
+              {/* Paginación */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(p - 1, 0))}
+                    disabled={currentPage === 0}
+                    className="p-2 rounded-lg bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+
+                  <div className="flex items-center gap-1.5">
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setCurrentPage(i)}
+                        className={`h-2 rounded-full transition-all ${
+                          i === currentPage ? "w-6 bg-lime" : "w-2 bg-white/20"
+                        }`}
+                        aria-label={`Ir a página ${i + 1}`}
+                      />
+                    ))}
                   </div>
-                )}
-              </>
-            )}
-          </section>
 
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages - 1))}
+                    disabled={currentPage === totalPages - 1}
+                    className="p-2 rounded-lg bg-ink-soft border border-ink-line text-paper disabled:opacity-20 disabled:cursor-not-allowed active:scale-90 transition-transform"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </div>
+              )}
+            </>
+          )}
         </main>
       </div>
     </AnimatedPage>

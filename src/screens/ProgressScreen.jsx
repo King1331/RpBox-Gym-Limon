@@ -26,24 +26,28 @@ export default function ProgressScreen() {
 
   return (
     <div className="flex flex-col min-h-screen bg-ink text-paper overflow-x-hidden w-full max-w-full">
-      {/* Top bar compacta */}
+      {/* Top bar compacta con botón circular y título centrado */}
       <div
-        className="flex items-center justify-between px-5 pb-2 border-b border-ink-line bg-ink shrink-0"
+        className="grid grid-cols-3 items-center px-5 pb-2 border-b border-ink-line bg-ink shrink-0"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
       >
-        <button
-          type="button"
-          onClick={() => setLocation('/')}
-          className="touch-press flex items-center gap-1 text-white/60 hover:text-paper active:scale-95 transition-all text-xs font-semibold uppercase tracking-widest"
-        >
-          <ChevronLeft size={16} />
-          Volver
-        </button>
-        <div className="text-center">
-          <div className="text-[10px] uppercase tracking-widest text-white/40">Datos de rendimiento</div>
-          <div className="text-sm font-bold text-paper">Progreso</div>
+        <div className="justify-self-start">
+          <button
+            type="button"
+            onClick={() => setLocation('/')}
+            className="icon-btn active:scale-95 transition-transform"
+            aria-label="Volver"
+          >
+            <ChevronLeft size={18} strokeWidth={2.5} />
+          </button>
         </div>
-        <div className="w-10" />
+
+        <div className="text-center justify-self-center min-w-0 px-2">
+          <div className="text-[10px] uppercase tracking-widest text-lime font-bold">Datos de rendimiento</div>
+          <div className="text-sm font-bold text-paper truncate">Progreso</div>
+        </div>
+
+        <div className="justify-self-end w-10" />
       </div>
 
       {/* Contenido scrolleable compacto */}
